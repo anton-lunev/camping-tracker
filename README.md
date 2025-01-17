@@ -17,8 +17,6 @@ Telegram.
 
 ## How It Works
 
-### Workflow
-
 1. **Fetch Data**: Retrieve campsite availability data for the given campground ID and date range.
 2. **Process Data**:
     - Identify available campsites.
