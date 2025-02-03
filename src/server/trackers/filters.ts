@@ -1,52 +1,14 @@
-const DAYS_OF_WEEK = [
-  "Sunday", // Corrected for JavaScript's getDay() method.
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
+import { CampsiteData } from "./types";
 
-export type CampsiteData = {
-  date: string;
-  day: string | null;
-  site: string;
-  campsite: string;
-  campsiteId: string;
-};
-export type CampsitesResponse = {
-  campsites: Record<
-    string,
-    {
-      site: string;
-      loop: string;
-      campsite_id: string;
-      availabilities: Record<string, string>;
-    }
-  >;
-};
-
-/**
- * Returns the day of the week for a given date.
- */
-export function getDayOfWeek(date: string): string | null {
-  const dayOfWeek = new Date(date).getDay();
-  return isNaN(dayOfWeek) ? null : DAYS_OF_WEEK[dayOfWeek];
-}
-
-/**
- * Filters camp data based on specific weekdays.
- */
+/** Filters camp data based on specific weekdays. */
 export function filterByWeekDay(
   campData: CampsiteData,
-  weekDays: string[],
+  weekDays: number[],
 ): CampsiteData | null {
-  return weekDays.length
-    ? campData.day && weekDays.includes(campData.day)
-      ? campData
-      : null
-    : campData;
+  if (weekDays.length) {
+    return campData.day && weekDays.includes(campData.day) ? campData : null;
+  }
+  return campData;
 }
 
 /**
@@ -61,9 +23,7 @@ export function keepOnlyNew(
   );
 }
 
-/**
- * Filters camp data based on specific dates.
- */
+/** Filters camp data based on specific dates. */
 export function filterCertainDays(campData: CampsiteData, days: string[]) {
   if (!days.length) return campData;
   const daysFormatted = days.map((day) =>
@@ -72,30 +32,4 @@ export function filterCertainDays(campData: CampsiteData, days: string[]) {
   return daysFormatted.includes(new Date(campData.date).toDateString())
     ? campData
     : null;
-}
-
-/**
- * Extracts all available sites from the API response.
- */
-export function findAvailablePlaces(
-  response: CampsitesResponse,
-): CampsiteData[] {
-  const available: CampsiteData[] = [];
-  const { campsites } = response;
-
-  for (const campsiteId in campsites) {
-    const campsite = campsites[campsiteId];
-    for (const [date, value] of Object.entries(campsite.availabilities)) {
-      if (value === "Available") {
-        available.push({
-          date,
-          day: getDayOfWeek(date),
-          site: campsite.site,
-          campsite: campsite.loop,
-          campsiteId: campsite.campsite_id,
-        });
-      }
-    }
-  }
-  return available;
 }

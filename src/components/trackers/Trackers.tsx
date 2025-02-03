@@ -9,8 +9,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useState } from "react";
-import { createTracker, NewTracker, Tracker, updateTracker } from "./actions";
+import { createTracker, updateTracker } from "./actions";
 import { Button } from "@/components/ui/button";
+import { NewTracker, Tracker } from "@/db/queries/trackers";
 
 type TrackersProps = {
   trackers: Tracker[];

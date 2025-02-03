@@ -23,10 +23,10 @@ function Input({ id, label, ...props }: InputProps) {
 }
 
 type AuthForm = {
-  onSignIn: (formData: FormData) => void | Promise<void>;
-  onSignUp: (formData: FormData) => void | Promise<void>;
+  onSignInAction: (formData: FormData) => void | Promise<void>;
+  onSignUpAction: (formData: FormData) => void | Promise<void>;
 };
-export default function AuthForm({ onSignIn, onSignUp }: AuthForm) {
+export default function AuthForm({ onSignInAction, onSignUpAction }: AuthForm) {
   const [isSignIn, setIsSignIn] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -54,7 +54,7 @@ export default function AuthForm({ onSignIn, onSignUp }: AuthForm) {
       <div>
         <button
           type="submit"
-          formAction={isSignIn ? onSignIn : onSignUp}
+          formAction={isSignIn ? onSignInAction : onSignUpAction}
           className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           {isSignIn ? "Sign In" : "Sign Up"}

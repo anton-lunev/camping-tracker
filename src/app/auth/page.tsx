@@ -11,7 +11,7 @@ export default function LoginPage() {
             Sign in to your account or create a new one
           </p>
         </div>
-        <AuthForm onSignIn={login} onSignUp={signup} />
+        <AuthForm onSignInAction={login} onSignUpAction={signup} />
       </div>
     </div>
   );

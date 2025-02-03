@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 
-export const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+export const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export const DATE_FORMAT = "yyyy-MM-dd";
 
 export function formatDate(date: Date, formatStr = DATE_FORMAT) {

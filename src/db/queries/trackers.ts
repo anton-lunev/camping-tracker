@@ -30,6 +30,10 @@ export function getActiveTrackers() {
   });
 }
 
+export function getTrackerById(id: string) {
+  return db.query.trackers.findFirst({ where: eq(trackers.id, id) });
+}
+
 export function getUserTrackers(userId: string) {
   return db.query.trackers.findMany({
     where: (trackers, { eq }) => eq(trackers.owner, userId),

@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tracker } from "@/components/trackers/actions";
 import { formatDate, toDate, WEEK_DAYS } from "@/components/trackers/utils";
+import { Tracker } from "@/db/queries/trackers";
 
 interface CampingTrackerCardsProps {
   trackers: Tracker[];
