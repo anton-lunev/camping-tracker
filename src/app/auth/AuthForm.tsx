@@ -14,7 +14,7 @@ function Input({ id, label, ...props }: InputProps) {
       </label>
       <input
         id={id}
-        className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-500/60 placeholder-gray-400 text-white bg-gray-800/40 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+        className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-500/60 placeholder-gray-400 text-white bg-gray-800/40 focus:outline-hidden focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
         placeholder={label}
         {...props}
       />
@@ -55,7 +55,7 @@ export default function AuthForm({ onSignIn, onSignUp }: AuthForm) {
         <button
           type="submit"
           formAction={isSignIn ? onSignIn : onSignUp}
-          className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           {isSignIn ? "Sign In" : "Sign Up"}
         </button>

@@ -44,13 +44,13 @@ export function Trackers({ trackers }: TrackersProps) {
   return (
     <div className="flex justify-center items-center flex-col gap-4 w-full">
       <div
-        className="w-full flex justify-center items-center gap-2 bg-contain bg-[url(/header.jpeg)] p-4 aspect-[3840/600]"
+        className="w-full flex justify-center items-center gap-2 bg-contain bg-[url(/header.jpeg)] p-4 aspect-3840/600"
         style={{
           maskImage:
             "linear-gradient(180deg, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%)",
         }}
       >
-        <h1 className="text-4xl font-extralight drop-shadow-sm">
+        <h1 className="text-4xl font-extralight drop-shadow-xs">
           Camping Trackers
         </h1>
         <Button size="icon" onClick={() => setIsCreating(true)}>
