@@ -3,8 +3,8 @@
 import {
   ComponentPropsWithoutRef,
   ComponentRef,
-  forwardRef,
   HTMLAttributes,
+  RefObject,
 } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
@@ -19,10 +19,13 @@ const DialogPortal = DialogPrimitive.Portal;
 
 const DialogClose = DialogPrimitive.Close;
 
-const DialogOverlay = forwardRef<
-  ComponentRef<typeof DialogPrimitive.Overlay>,
-  ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({ className, ...props }, ref) => (
+const DialogOverlay = ({
+  ref,
+  className,
+  ...props
+}: ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay> & {
+  ref?: RefObject<ComponentRef<typeof DialogPrimitive.Overlay>>;
+}) => (
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
@@ -31,13 +34,17 @@ const DialogOverlay = forwardRef<
     )}
     {...props}
   />
-));
+);
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
-const DialogContent = forwardRef<
-  ComponentRef<typeof DialogPrimitive.Content>,
-  ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+const DialogContent = ({
+  ref,
+  className,
+  children,
+  ...props
+}: ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
+  ref?: RefObject<ComponentRef<typeof DialogPrimitive.Content>>;
+}) => (
   <DialogPortal>
     <DialogOverlay>
       <DialogPrimitive.Content
@@ -56,7 +63,7 @@ const DialogContent = forwardRef<
       </DialogPrimitive.Content>
     </DialogOverlay>
   </DialogPortal>
-));
+);
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
 const DialogHeader = ({
@@ -87,10 +94,13 @@ const DialogFooter = ({
 );
 DialogFooter.displayName = "DialogFooter";
 
-const DialogTitle = forwardRef<
-  ComponentRef<typeof DialogPrimitive.Title>,
-  ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
->(({ className, ...props }, ref) => (
+const DialogTitle = ({
+  ref,
+  className,
+  ...props
+}: ComponentPropsWithoutRef<typeof DialogPrimitive.Title> & {
+  ref?: RefObject<ComponentRef<typeof DialogPrimitive.Title>>;
+}) => (
   <>
     <DialogPrimitive.Title
       ref={ref}
@@ -102,19 +112,22 @@ const DialogTitle = forwardRef<
     />
     <DialogDescription className="sr-only">{props.children}</DialogDescription>
   </>
-));
+);
 DialogTitle.displayName = DialogPrimitive.Title.displayName;
 
-const DialogDescription = forwardRef<
-  ComponentRef<typeof DialogPrimitive.Description>,
-  ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
->(({ className, ...props }, ref) => (
+const DialogDescription = ({
+  ref,
+  className,
+  ...props
+}: ComponentPropsWithoutRef<typeof DialogPrimitive.Description> & {
+  ref?: RefObject<ComponentRef<typeof DialogPrimitive.Description>>;
+}) => (
   <DialogPrimitive.Description
     ref={ref}
     className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
-));
+);
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
 export {
