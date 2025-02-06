@@ -8,7 +8,7 @@ export const router = {
   ) => {
     let resolvedUrl = url;
 
-    if (params && Object.values(params).length > 0) {
+    if (params) {
       const { pathname } = new URL(url, "https://test.io"); // Use a dummy base URL to parse relative URLs
       const resolvedPathname = pathname
         .split("/")

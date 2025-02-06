@@ -1,7 +1,10 @@
 import { CampsitesResponse, campsitesResponseSchema } from "./schema";
 import { PROVIDER_CONFIG } from "./config";
 import { router } from "@/server/utils/router";
+import { BaseError, handleZodError, NetworkError } from "../common/errors";
+import { z } from "zod";
 
+// TODO move to utils
 /**
  * Returns an array of strings with month period.
  * @param start - Start date in YYYY-MM-DD format.
@@ -44,12 +47,31 @@ export async function fetchData(
       { start_date: `${date}T00:00:00.000Z` },
     );
 
-    const response = await fetch(url, { method: "GET" });
-    if (!response.ok) {
-      throw new Error(`Failed to fetch data for date: ${date}`);
+    try {
+      const response = await fetch(url, { method: "GET" });
+      if (!response.ok) {
+        throw new NetworkError(
+          `HTTP error! status: ${response.status} ${response.statusText}`,
+        );
+      }
+      const data = await response.json();
+
+      try {
+        return campsitesResponseSchema.parse(data);
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          throw handleZodError(error, { date, campingId });
+        }
+        throw error;
+      }
+    } catch (error) {
+      if (error instanceof BaseError) throw error;
+      throw new BaseError("An unexpected error occurred", error as Error, {
+        date,
+        campingId,
+        url,
+      });
     }
-    const data = await response.json();
-    return campsitesResponseSchema.parse(data);
   });
 
   return Promise.all(fetchPromises);

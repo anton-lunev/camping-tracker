@@ -1,4 +1,7 @@
 import schedule, { Job } from "node-schedule";
+import { Logger } from "@/server/utils/logger";
+
+const logger = Logger.for("Scheduler");
 
 /**
  * Convert seconds into a cron expression for recurring intervals.
@@ -49,21 +52,21 @@ export function createJob(jobMeta: JobMeta): void {
   const { id, rule, handler } = jobMeta;
 
   if (activeJobs.has(id)) {
-    console.log(`Job with ID "${id}" already exists.`);
+    logger.debug(`Job with ID "${id}" already exists.`);
     return;
   }
 
   const job = schedule.scheduleJob(rule, async () => {
-    console.log(`Running job "${id}" at ${new Date().toISOString()}`);
+    logger.debug(`Running job "${id}" at ${new Date().toISOString()}`);
     try {
       await handler(id);
     } catch (error) {
-      console.error(`Error in job "${id}":`, error);
+      logger.error(`Error in job "${id}":`, error);
     }
   });
 
   activeJobs.set(id, job);
-  console.log(`Scheduled job "${id}" with rule: ${rule}`);
+  logger.debug(`Scheduled job "${id}" with rule: ${rule}`);
 }
 
 /**
@@ -76,9 +79,9 @@ export function stopJob(jobId: string): void {
   if (job) {
     job.cancel();
     activeJobs.delete(jobId);
-    console.log(`Stopped and removed job "${jobId}"`);
+    logger.debug(`Stopped and removed job "${jobId}"`);
   } else {
-    console.log(`No job found with ID "${jobId}"`);
+    logger.warn(`No job found with ID "${jobId}"`);
   }
 }
 
@@ -88,11 +91,11 @@ export function stopJob(jobId: string): void {
 export function stopAllJobs(): void {
   activeJobs.forEach((job, jobId) => {
     job.cancel();
-    console.log(`Stopped job "${jobId}"`);
+    logger.debug(`Stopped job "${jobId}"`);
   });
 
   activeJobs.clear();
-  console.log("All jobs stopped.");
+  logger.debug("All jobs stopped.");
 }
 
 /**

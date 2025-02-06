@@ -1,5 +1,7 @@
 import { SearchResponse, searchResponseSchema } from "@/server/trackers/providers/reserve-california/schema";
 import { PROVIDER_CONFIG } from "./config";
+import { BaseError, handleZodError, NetworkError } from "../common/errors";
+import { z } from "zod";
 
 /**
  * Fetch data using native fetch with a POST request.
@@ -28,14 +30,35 @@ export async function fetchData(
     RestrictADA: false,
   };
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (!response.ok) {
-    throw new Error("Failed to fetch data");
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new NetworkError(
+        `HTTP error! status: ${response.status} ${response.statusText}`,
+      );
+    }
+
+    const rawData = await response.json();
+
+    try {
+      return searchResponseSchema.parse(rawData);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw handleZodError(error, { campingId, start, end });
+      }
+      throw error;
+    }
+  } catch (error) {
+    if (error instanceof BaseError) throw error;
+    throw new BaseError("An unexpected error occurred", error as Error, {
+      campingId,
+      start,
+      end,
+    });
   }
-  const rawData = await response.json();
-  return searchResponseSchema.parse(rawData);
 }

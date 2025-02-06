@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { router } from "@/server/utils/router";
+import { Logger } from "@/server/utils/logger";
 
 const apiToken = process.env.TELEGRAM_API_TOKEN!;
 const chatId = process.env.TELEGRAM_CHAT_ID!;
@@ -26,6 +27,7 @@ type CampInfo = {
  */
 function formatSpotLink(site: string, campsiteId?: string): string {
   // TODO: support link to campsite for other sources.
+  // TODO: use router.resolve to generate the link.
   return campsiteId
     ? `[${site}](https://www.recreation.gov/camping/campsites/${campsiteId})`
     : site;
@@ -58,7 +60,7 @@ export async function postToChannel(text: string) {
   try {
     return await fetch(url, { method: "GET" });
   } catch (error) {
-    console.error("Failed to post to Telegram channel:", error);
+    Logger.error("Messenger", "Failed to post to Telegram channel:", error);
     throw error;
   }
 }

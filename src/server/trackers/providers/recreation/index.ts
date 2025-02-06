@@ -6,6 +6,7 @@ import {
   filterCertainDays,
   keepOnlyNew,
 } from "@/server/trackers/providers/common/filters";
+import { Logger } from "@/server/utils/logger";
 
 export function findAvailableSpots(
   campingId: string,
@@ -24,12 +25,13 @@ export function findAvailableSpots(
       .filter((elem) => filterByWeekDay(elem, weekDays))
       .filter((elem) => filterCertainDays(elem, days));
 
-    const result = matchingSites.filter(
-      keepOnlyNew.bind(null, handledCampSites),
+    const result = matchingSites.filter((item) =>
+      keepOnlyNew(handledCampSites, item),
     );
 
-    console.log(
-      `Overall found ${matchingSites.length} available sites in https://www.recreation.gov/camping/campgrounds/${campingId}`,
+    Logger.info(
+      "[RecreationAdapter]",
+      `Overall found ${matchingSites.length} available sites, where ${result.length} new sites`,
     );
 
     return result;
