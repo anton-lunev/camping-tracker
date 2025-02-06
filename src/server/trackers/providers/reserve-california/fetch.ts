@@ -1,10 +1,5 @@
-import {
-  SearchResponse,
-  searchResponseSchema,
-} from "@/server/trackers/providers/reserve-california/schema";
-
-const RESERVE_CALIFORNIA_URL =
-  "https://calirdr.usedirect.com/RDR/rdr/search/grid";
+import { SearchResponse, searchResponseSchema } from "@/server/trackers/providers/reserve-california/schema";
+import { PROVIDER_CONFIG } from "./config";
 
 /**
  * Fetch data using native fetch with a POST request.
@@ -12,12 +7,12 @@ const RESERVE_CALIFORNIA_URL =
  * @param start - Start date in YYYY-MM-DD format.
  * @param end - End date in YYYY-MM-DD format.
  */
-export async function fetchData1(
+export async function fetchData(
   campingId: string,
   start: string,
   end: string,
 ): Promise<SearchResponse> {
-  const url = RESERVE_CALIFORNIA_URL;
+  const url = PROVIDER_CONFIG.API_URL;
   const payload = {
     IsADA: false,
     MinVehicleLength: 0,
@@ -41,6 +36,6 @@ export async function fetchData1(
   if (!response.ok) {
     throw new Error("Failed to fetch data");
   }
-  const rawData = response.json();
+  const rawData = await response.json();
   return searchResponseSchema.parse(rawData);
 }

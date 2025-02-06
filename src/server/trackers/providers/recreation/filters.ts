@@ -1,6 +1,6 @@
 import { CampsitesResponse } from "@/server/trackers/providers/recreation/schema";
 import { CampsiteData } from "@/server/trackers/types";
-import { getDayOfWeek } from "@/server/trackers/utils";
+import { getDayOfWeek } from "@/server/trackers/providers/common/utils";
 
 /** Extracts all available sites from the API response. */
 export function findAvailablePlaces(

@@ -1,6 +1,10 @@
-import { fetchData1 } from "@/server/trackers/providers/reserve-california/fetch";
-import { findUnits } from "@/server/trackers/providers/reserve-california/filters";
-import { filterByWeekDay, keepOnlyNew } from "@/server/trackers/filters";
+import { fetchData } from "@/server/trackers/providers/reserve-california/fetch";
+import { findAvailablePlaces } from "@/server/trackers/providers/reserve-california/filters";
+import {
+  filterByWeekDay,
+  filterCertainDays,
+  keepOnlyNew,
+} from "@/server/trackers/providers/common/filters";
 import { CampsiteData } from "@/server/trackers/types";
 
 export function findAvailableSpots(
@@ -9,13 +13,14 @@ export function findAvailableSpots(
   weekDays: number[],
   start: string,
   end: string,
-  alreadyFoundCampSites: CampsiteData[],
+  handledCampSites: CampsiteData[],
 ) {
-  return fetchData1(params.campingId, start, end).then((response) => {
-    const matchingSites = findUnits(response, days);
+  return fetchData(params.campingId, start, end).then((response) => {
+    const matchingSites = findAvailablePlaces(response);
     const result = matchingSites
-      .filter((elem) => filterByWeekDay(elem, weekDays))
-      .filter(keepOnlyNew.bind(null, alreadyFoundCampSites));
+      .filter((item) => filterByWeekDay(item, weekDays))
+      .filter((item) => filterCertainDays(item, days))
+      .filter((item) => keepOnlyNew(handledCampSites, item));
 
     console.log(
       `Overall found ${matchingSites.length} available sites in https://www.reservecalifornia.com/Web/Default.aspx#!park/${params.parkId}/${params.campingId}`,

@@ -1,8 +1,6 @@
 import { CampsitesResponse, campsitesResponseSchema } from "./schema";
-import { constructUrl } from "@/utils/url";
-
-const RECREATION_GOV_URL =
-  "https://www.recreation.gov/api/camps/availability/campground/";
+import { PROVIDER_CONFIG } from "./config";
+import { router } from "@/server/utils/router";
 
 /**
  * Returns an array of strings with month period.
@@ -32,7 +30,7 @@ function getDates(start: string, end: string): string[] {
  * @param {string} campingId - The ID of the campground.
  * @param {string} start - Start date in YYYY-MM-DD format.
  * @param {string} end - End date in YYYY-MM-DD format.
- * @returns {Promise<any[]>} - A promise that resolves to an array of responses.
+ * @returns - A promise that resolves to an array of responses.
  */
 export async function fetchData(
   campingId: string,
@@ -40,15 +38,17 @@ export async function fetchData(
   end: string,
 ): Promise<CampsitesResponse[]> {
   const fetchPromises = getDates(start, end).map(async (date) => {
-    const url = constructUrl(`${RECREATION_GOV_URL}${campingId}/month`, {
-      start_date: `${date}T00:00:00.000Z`,
-    });
+    const url = router.resolve(
+      PROVIDER_CONFIG.API_URL,
+      { campingId },
+      { start_date: `${date}T00:00:00.000Z` },
+    );
 
     const response = await fetch(url, { method: "GET" });
     if (!response.ok) {
       throw new Error(`Failed to fetch data for date: ${date}`);
     }
-    const data = response.json();
+    const data = await response.json();
     return campsitesResponseSchema.parse(data);
   });
 

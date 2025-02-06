@@ -1,5 +1,5 @@
-import { constructUrl } from "@/utils/url";
 import "dotenv/config";
+import { router } from "@/server/utils/router";
 
 const apiToken = process.env.TELEGRAM_API_TOKEN!;
 const chatId = process.env.TELEGRAM_CHAT_ID!;
@@ -54,7 +54,7 @@ export function formatInfoToMessage(campInfo: CampInfo[], url: string): string {
  * @returns A promise that resolves when the fetch call completes.
  */
 export async function postToChannel(text: string) {
-  const url = constructUrl(chatUrl, { chat_id: chatId, text });
+  const url = router.resolve(chatUrl, {}, { chat_id: chatId, text });
   try {
     return await fetch(url, { method: "GET" });
   } catch (error) {

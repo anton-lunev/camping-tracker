@@ -14,6 +14,7 @@ import {
   Tracker,
   updateTrackerDb,
 } from "@/db/queries/trackers";
+import { z } from "zod";
 
 export async function getSubs() {
   const supabase = await createClient();
@@ -56,34 +57,43 @@ type CampingData = {
 };
 type CampingDataFetchers = Record<string, (id: string) => Promise<CampingData>>;
 
+const reserveCaliforniaSchema = z.object({
+  Name: z.string(),
+});
+const recreationGovSchema = z.object({
+  campground: z.object({
+    facility_name: z.string(),
+  }),
+});
+
 const campingDataFetchers: CampingDataFetchers = {
   reservecalifornia: async (id: string) => {
     const response = await fetch(
       `https://calirdr.usedirect.com/RDR/rdr/fd/facilities/${id}`,
       { headers: { "Content-Type": "application/json" } },
     );
-    if (!response.ok) {
+    if (!response.ok || response.status !== 200) {
       throw new Error("Failed to fetch camping data from reservecalifornia");
     }
-    const data = await response.json();
-    console.log(data);
-    return {
-      name: data.Name,
-    };
+
+    const rawData = await response.json();
+    console.log(rawData);
+    const data = reserveCaliforniaSchema.parse(rawData);
+    return { name: data.Name };
   },
   "recreation.gov": async (id: string) => {
     const response = await fetch(
       `https://www.recreation.gov/api/camps/campgrounds/${id}`,
       { headers: { "Content-Type": "application/json" } },
     );
-    if (!response.ok) {
+    if (!response.ok || response.status !== 200) {
       throw new Error("Failed to fetch camping data from recreation.gov");
     }
-    const data = await response.json();
-    console.log(data);
-    return {
-      name: data.campground.facility_name,
-    };
+    const rawData = await response.json();
+    console.log(rawData);
+    // TODO: return error if campground not found
+    const data = recreationGovSchema.parse(rawData);
+    return { name: data.campground.facility_name };
   },
 };
 

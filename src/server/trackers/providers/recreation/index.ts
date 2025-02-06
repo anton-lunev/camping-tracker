@@ -5,7 +5,7 @@ import {
   filterByWeekDay,
   filterCertainDays,
   keepOnlyNew,
-} from "@/server/trackers/filters";
+} from "@/server/trackers/providers/common/filters";
 
 export function findAvailableSpots(
   campingId: string,
@@ -13,7 +13,7 @@ export function findAvailableSpots(
   weekDays: number[],
   start: string,
   end: string,
-  alreadyFoundCampSites: CampsiteData[],
+  handledCampSites: CampsiteData[],
 ) {
   return fetchData(campingId, start, end).then((responses) => {
     const matchingSites = responses
@@ -25,7 +25,7 @@ export function findAvailableSpots(
       .filter((elem) => filterCertainDays(elem, days));
 
     const result = matchingSites.filter(
-      keepOnlyNew.bind(null, alreadyFoundCampSites),
+      keepOnlyNew.bind(null, handledCampSites),
     );
 
     console.log(
