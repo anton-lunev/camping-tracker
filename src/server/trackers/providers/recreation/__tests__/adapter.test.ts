@@ -33,7 +33,7 @@ describe("RecreationAdapter", () => {
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({
       date: "2024-03-20",
-      day: 3,
+      weekDay: 3,
       site: "A1",
       siteName: "A1",
       campsite: "Loop A",
@@ -54,7 +54,7 @@ describe("RecreationAdapter", () => {
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({
       date: "2024-03-21",
-      day: 4, // Thursday
+      weekDay: 4, // Thursday
       site: "A2",
       siteName: "A2",
       campsite: "Loop A",

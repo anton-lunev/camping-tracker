@@ -13,14 +13,17 @@ export function findAvailablePlaces(data: SearchResponse): CampsiteData[] {
   Object.values(data.Facility.Units ?? {}).forEach((unitInfo) => {
     const freeDays = Object.values(unitInfo.Slices)
       .filter((item) => item.IsFree)
-      .map((item) => ({
-        date: getFormattedDateWithoutTz(item.Date),
-        day: getDayOfWeek(item.Date),
-        site: unitInfo.UnitId.toString(),
-        siteName: unitInfo.ShortName,
-        campsite: data.Facility.Name,
-        campsiteId: data.Facility.FacilityId.toString(),
-      }));
+      .map(
+        (item) =>
+          ({
+            date: getFormattedDateWithoutTz(item.Date),
+            weekDay: getDayOfWeek(item.Date),
+            site: unitInfo.UnitId.toString(),
+            siteName: unitInfo.ShortName,
+            campsite: data.Facility.Name,
+            campsiteId: data.Facility.FacilityId.toString(),
+          }) satisfies CampsiteData,
+      );
 
     availableUnits.push(...freeDays);
   });
