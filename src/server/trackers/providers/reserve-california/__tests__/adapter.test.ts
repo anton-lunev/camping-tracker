@@ -35,7 +35,8 @@ describe("ReserveCaliforniaAdapter", () => {
     expect(results[0]).toEqual({
       date: "2024-03-20",
       day: 3, // Wednesday
-      site: "Site 1",
+      site: "1",
+      siteName: "001",
       campsite: "Test Campground",
       campsiteId: "456",
     });
@@ -54,7 +55,8 @@ describe("ReserveCaliforniaAdapter", () => {
     expect(results[0]).toEqual({
       date: "2024-03-20",
       day: 3,
-      site: "Site 1",
+      site: "1",
+      siteName: "001",
       campsite: "Test Campground",
       campsiteId: "456",
     });

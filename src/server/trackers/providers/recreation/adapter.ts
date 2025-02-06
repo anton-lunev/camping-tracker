@@ -1,5 +1,4 @@
-import { CampAdapter } from "../campAdapter";
-import { CampsiteData } from "../../types";
+import { CampsiteData, ProviderAdapter } from "../providerAdapter";
 import * as recreation from "./index";
 import { PROVIDER_CONFIG } from "./config";
 import { router } from "@/server/utils/router";
@@ -8,7 +7,7 @@ import { BaseError } from "../common/errors";
 
 const logger = Logger.for("RecreationAdapter");
 
-export class RecreationAdapter implements CampAdapter {
+export class RecreationAdapter implements ProviderAdapter {
   async findCamp(
     campId: string,
     days: string[],
@@ -61,12 +60,14 @@ export class RecreationAdapter implements CampAdapter {
     }
   }
 
-  getNotificationData(results: CampsiteData[], campId: string) {
+  getNotificationData(results: CampsiteData[], campingId: string) {
     if (!results.length) return null;
 
     return {
       results,
-      url: router.resolve(PROVIDER_CONFIG.CAMPGROUND_URL, { campId }),
+      campingName: results[0].campsite,
+      campingUrl: router.resolve(PROVIDER_CONFIG.CAMPGROUND_URL, { campingId }),
+      campsiteUrl: PROVIDER_CONFIG.CAMPSITE_URL,
       count: results.length,
     };
   }

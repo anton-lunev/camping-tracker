@@ -1,11 +1,10 @@
 "use server";
-import { findCampsAndNotify } from "./index";
+import { findCampsAndNotify } from "./findCampsAndNotify";
 import { getTrackerById } from "@/db/queries/trackers";
-import { getProviderFromString } from "@/server/trackers/providers/campAdapterFactory";
+import { getProviderFromString } from "@/server/trackers/providers/providerAdapterFactory";
 import { Logger } from "@/server/utils/logger";
 
 export async function handleTracker(trackerId: string) {
-  // This function will be called when the tracker is triggered
   Logger.debug("[handleTracker]", `Tracker ${trackerId} logic running...`);
   const sub = await getTrackerById(trackerId);
   if (!sub) {

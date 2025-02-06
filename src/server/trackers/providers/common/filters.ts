@@ -1,6 +1,6 @@
-import { CampsiteData } from "../../types";
 import { getFormattedDateWithoutTz } from "@/server/trackers/providers/common/utils";
 import { isNil } from "lodash";
+import { CampsiteData } from "@/server/trackers/providers/providerAdapter";
 
 /** Filters camp data based on specific weekdays. */
 export function filterByWeekDay(campData: CampsiteData, weekDays: number[]) {

@@ -5,8 +5,8 @@ import {
   filterCertainDays,
   keepOnlyNew,
 } from "@/server/trackers/providers/common/filters";
-import { CampsiteData } from "@/server/trackers/types";
 import { Logger } from "@/server/utils/logger";
+import { CampsiteData } from "@/server/trackers/providers/providerAdapter";
 
 export function findAvailableSpots(
   params: { campingId: string; parkId: string },

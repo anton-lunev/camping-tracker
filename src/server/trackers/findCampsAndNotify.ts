@@ -1,28 +1,30 @@
 import {
-  CampAdapterFactory,
   CampProvider,
-} from "./providers/campAdapterFactory";
+  ProviderAdapterFactory,
+} from "./providers/providerAdapterFactory";
 import { RecreationAdapter } from "./providers/recreation/adapter";
 import { ReserveCaliforniaAdapter } from "./providers/reserve-california/adapter";
-import { CampsiteData } from "./types";
 import {
   formatInfoToMessage,
   postToChannel,
 } from "@/server/trackers/messanger";
-import { Logger } from "@/server/utils/logger"; // Register adapters
+import { Logger } from "@/server/utils/logger";
+import { CampsiteData } from "@/server/trackers/providers/providerAdapter"; // Register adapters
 
 // Register adapters
-CampAdapterFactory.registerAdapter(
+ProviderAdapterFactory.registerAdapter(
   CampProvider.RECREATION,
   new RecreationAdapter(),
 );
-CampAdapterFactory.registerAdapter(
+ProviderAdapterFactory.registerAdapter(
   CampProvider.RESERVE_CALIFORNIA,
   new ReserveCaliforniaAdapter(),
 );
 
 // TODO: Move this to a database
 const handledCampSites: CampsiteData[] = [];
+
+const logger = Logger.for("findCampsAndNotify");
 
 // Main function to find camps
 export const findCampsAndNotify = async (
@@ -34,7 +36,7 @@ export const findCampsAndNotify = async (
   end: string,
 ) => {
   try {
-    const adapter = CampAdapterFactory.getAdapter(provider);
+    const adapter = ProviderAdapterFactory.getAdapter(provider);
     const results = await adapter.findCamp(
       campId,
       days,
@@ -50,11 +52,9 @@ export const findCampsAndNotify = async (
       const notificationData = adapter.getNotificationData(results, campId);
       if (notificationData) {
         try {
-          await postToChannel(
-            formatInfoToMessage(notificationData.results, notificationData.url),
-          );
+          await postToChannel(formatInfoToMessage(notificationData));
         } catch (error) {
-          Logger.error("findCamp", "Failed to post notification", error);
+          logger.error("Failed to post notification", error);
           throw error;
         }
       }
@@ -62,6 +62,6 @@ export const findCampsAndNotify = async (
 
     return results;
   } catch (error) {
-    Logger.error("findCamp", "Error finding campsites:", error);
+    logger.error("Error finding campsites:", error);
   }
 };

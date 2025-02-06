@@ -1,5 +1,4 @@
 import { fetchData } from "@/server/trackers/providers/recreation/fetch";
-import { CampsiteData } from "@/server/trackers/types";
 import { findAvailablePlaces } from "@/server/trackers/providers/recreation/filters";
 import {
   filterByWeekDay,
@@ -7,6 +6,7 @@ import {
   keepOnlyNew,
 } from "@/server/trackers/providers/common/filters";
 import { Logger } from "@/server/utils/logger";
+import { CampsiteData } from "@/server/trackers/providers/providerAdapter";
 
 export function findAvailableSpots(
   campingId: string,

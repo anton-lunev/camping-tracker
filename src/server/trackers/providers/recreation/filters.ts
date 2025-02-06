@@ -1,6 +1,6 @@
 import { CampsitesResponse } from "@/server/trackers/providers/recreation/schema";
-import { CampsiteData } from "@/server/trackers/types";
-import { getDayOfWeek } from "@/server/trackers/providers/common/utils";
+import { getDayOfWeek, getFormattedDateWithoutTz } from "@/server/trackers/providers/common/utils";
+import { CampsiteData } from "@/server/trackers/providers/providerAdapter";
 
 /** Extracts all available sites from the API response. */
 export function findAvailablePlaces(
@@ -14,9 +14,10 @@ export function findAvailablePlaces(
     for (const [date, value] of Object.entries(campsite.availabilities)) {
       if (value === "Available") {
         available.push({
-          date,
+          date: getFormattedDateWithoutTz(date),
           day: getDayOfWeek(date),
           site: campsite.site,
+          siteName: campsite.site,
           campsite: campsite.loop,
           campsiteId: campsite.campsite_id,
         });

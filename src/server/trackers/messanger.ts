@@ -1,6 +1,10 @@
 import "dotenv/config";
 import { router } from "@/server/utils/router";
 import { Logger } from "@/server/utils/logger";
+import {
+  CampsiteData,
+  NotificationData,
+} from "@/server/trackers/providers/providerAdapter";
 
 const apiToken = process.env.TELEGRAM_API_TOKEN!;
 const chatId = process.env.TELEGRAM_CHAT_ID!;
@@ -13,38 +17,36 @@ if (!apiToken || !chatId) {
 
 const chatUrl = `https://api.telegram.org/bot${apiToken}/sendMessage`;
 
-type CampInfo = {
-  site: string;
-  campsiteId?: string;
-  date: string;
-};
-
 /**
  * Formats a link to a campsite. Supports Recreation.gov links.
- * @param site - The name of the campsite.
- * @param campsiteId - The ID of the campsite (optional).
  * @returns A formatted Markdown link or the site name if no ID is available.
  */
-function formatSpotLink(site: string, campsiteId?: string): string {
-  // TODO: support link to campsite for other sources.
-  // TODO: use router.resolve to generate the link.
-  return campsiteId
-    ? `[${site}](https://www.recreation.gov/camping/campsites/${campsiteId})`
-    : site;
+function formatCampsiteLink(
+  campsiteData: CampsiteData,
+  campsiteUrl?: string,
+): string {
+  const campsiteName = campsiteData.siteName ?? campsiteData.site;
+
+  if (!campsiteUrl) return campsiteName;
+  return `[${campsiteName}](${router.resolve(campsiteUrl, campsiteData)})`;
 }
 
 /**
  * Formats campsite information into a Telegram message.
- * @param campInfo - Array of campsite information objects.
- * @param url - The source URL for the campsite search.
  * @returns A formatted string ready to be sent to Telegram.
  */
-export function formatInfoToMessage(campInfo: CampInfo[], url: string): string {
-  const rows: string[] = [`Found ${campInfo.length} new camp sites in`, url];
+export function formatInfoToMessage(
+  notificationData: NotificationData,
+): string {
+  const rows: string[] = [
+    `Found ${notificationData.count} new camp sites in`,
+    `[${notificationData.campingName}](${notificationData.campingUrl})`,
+  ];
+  // TODO: merge date intervals for the same spots
   rows.push(
-    ...campInfo.map(
+    ...notificationData.results.map(
       (el) =>
-        `spot: ${formatSpotLink(el.site, el.campsiteId)}, date: ${el.date.split("T")[0]}`,
+        `spot: ${formatCampsiteLink(el, notificationData.campsiteUrl)}, date: ${el.date}`,
     ),
   );
   return rows.join("\n");
