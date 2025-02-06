@@ -89,16 +89,11 @@ export default function TrackerForm<T extends NewTracker>({
     }));
   };
 
-  const handleDaysChange = (date: Date | undefined) => {
-    if (date) {
-      const formattedDate = formatDate(date);
-      setEditedTracker((prev) => ({
-        ...prev,
-        days: prev.days?.includes(formattedDate)
-          ? prev.days?.filter((d) => d !== formattedDate)
-          : [...(prev.days ?? []), formattedDate].sort(),
-      }));
-    }
+  const handleDaysChange = (dates: Date[] | undefined = []) => {
+    setEditedTracker((prev) => ({
+      ...prev,
+      days: dates?.map((date) => formatDate(date)).sort(),
+    }));
   };
 
   const removeDay = (dayToRemove: string) => {
@@ -196,7 +191,7 @@ export default function TrackerForm<T extends NewTracker>({
                 mode="single"
                 selected={toDate(editedTracker.startDate)}
                 onSelect={(date) => handleDateChange(date, "startDate")}
-                initialFocus
+                autoFocus
               />
             </PopoverContent>
           </Popover>
@@ -221,7 +216,7 @@ export default function TrackerForm<T extends NewTracker>({
                 mode="single"
                 selected={toDate(editedTracker.endDate)}
                 onSelect={(date) => handleDateChange(date, "endDate")}
-                initialFocus
+                autoFocus
               />
             </PopoverContent>
           </Popover>
@@ -244,17 +239,13 @@ export default function TrackerForm<T extends NewTracker>({
             <Calendar
               mode="multiple"
               selected={editedTracker.days?.map((day) => toDate(day))}
-              onSelect={(dates) => {
-                if (dates && dates.length > 0) {
-                  const lastSelectedDate = dates[dates.length - 1];
-                  handleDaysChange(lastSelectedDate);
-                }
-              }}
-              initialFocus
+              onSelect={handleDaysChange}
+              autoFocus
             />
           </PopoverContent>
         </Popover>
         <div className="flex flex-wrap gap-2 mt-2">
+          {/* TODO: merge day intervals */}
           {editedTracker.days?.map((day) => (
             <Badge
               key={day}
