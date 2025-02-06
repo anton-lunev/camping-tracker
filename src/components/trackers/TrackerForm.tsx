@@ -12,13 +12,11 @@ import {
 import { getCampingData } from "./actions";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
-import {
-  formatDate,
-  parseCampingUrl,
-  toDate,
-  WEEK_DAYS,
-} from "@/components/trackers/utils";
+import { parseCampingUrl } from "@/components/trackers/utils";
 import { Camping, NewTracker } from "@/db/queries/trackers";
+import { DaysOfWeek } from "@/components/trackers/DaysOfWeek";
+import { DateRanges } from "@/components/trackers/DateRanges";
+import { formatDate, toDate } from "@/lib/date";
 
 interface TrackerFormProps<T extends NewTracker> {
   tracker?: T;
@@ -96,10 +94,13 @@ export default function TrackerForm<T extends NewTracker>({
     }));
   };
 
-  const removeDay = (dayToRemove: string) => {
+  const removeDays = (daysToRemove: Date[]) => {
+    const formattedDatesToRemove = new Set(
+      daysToRemove.map((date) => formatDate(date)),
+    );
     setEditedTracker((prev) => ({
       ...prev,
-      days: prev.days?.filter((day) => day !== dayToRemove),
+      days: prev.days?.filter((day) => !formattedDatesToRemove.has(day)),
     }));
   };
 
@@ -230,7 +231,7 @@ export default function TrackerForm<T extends NewTracker>({
             <Button
               id="tracked-days"
               variant="outline"
-              className="w-full justify-start text-left font-normal"
+              className="w-full justify-start text-left font-normal mb-2"
             >
               Select days
             </Button>
@@ -244,44 +245,19 @@ export default function TrackerForm<T extends NewTracker>({
             />
           </PopoverContent>
         </Popover>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {/* TODO: merge day intervals */}
-          {editedTracker.days?.map((day) => (
-            <Badge
-              key={day}
-              variant="secondary"
-              className="flex items-center gap-1"
-            >
-              {formatDate(toDate(day), "PP")}
-              <button
-                type="button"
-                onClick={() => removeDay(day)}
-                className="text-xs rounded-full hover:bg-destructive hover:text-destructive-foreground"
-              >
-                <X size={14} />
-                <span className="sr-only">
-                  Remove {formatDate(toDate(day), "PP")}
-                </span>
-              </button>
-            </Badge>
-          ))}
-        </div>
+        <DateRanges
+          dates={editedTracker.days}
+          onRemove={removeDays}
+          variant="secondary"
+        />
       </div>
 
       <div>
-        <Label>Week Days</Label>
-        <div className="flex flex-wrap gap-2 mt-1">
-          {WEEK_DAYS.map((day, index) => (
-            <div key={day} className="flex items-center space-x-2">
-              <Checkbox
-                id={`day-${index}`}
-                checked={editedTracker.weekDays?.includes(index)}
-                onCheckedChange={() => handleWeekDaysChange(index)}
-              />
-              <label htmlFor={`day-${index}`}>{day}</label>
-            </div>
-          ))}
-        </div>
+        <Label className="mb-1">Week Days</Label>
+        <DaysOfWeek
+          selection={editedTracker.weekDays}
+          onChange={handleWeekDaysChange}
+        />
       </div>
 
       <div>

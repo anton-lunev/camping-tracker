@@ -1,23 +1,3 @@
-import { format } from "date-fns";
-
-export const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-export const DATE_FORMAT = "yyyy-MM-dd";
-
-export function formatDate(date: Date, formatStr = DATE_FORMAT) {
-  return format(date, formatStr);
-}
-
-function hasTZ(dateStr: string) {
-  return dateStr.includes("T") || dateStr.includes("+");
-}
-
-export function toDate(dateStr: string) {
-  // time fixes timezone issues, it'll parse the date in local timezone
-  // This should be used only on UI side for rendering
-  const time = hasTZ(dateStr) ? "" : "T00:00:00";
-  return new Date(dateStr + time);
-}
-
 interface ParsedCampingUrl {
   provider: string;
   campingId: string;

@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatDate, toDate, WEEK_DAYS } from "@/components/trackers/utils";
 import { Tracker } from "@/db/queries/trackers";
+import { formatDate, toDate, WEEK_DAYS } from "@/lib/date";
+import { DateRanges } from "@/components/trackers/DateRanges";
 
 interface CampingTrackerCardsProps {
   trackers: Tracker[];
@@ -61,15 +62,10 @@ export default function CampingTrackerCards({
                   </div>
                 </div>
               ) : null}
-
               {tracker.days?.length ? (
                 <div>
-                  <span className="font-semibold">Tracked Days:</span>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {tracker.days?.map((day) => (
-                      <Badge key={day}>{formatDate(toDate(day), "PP")}</Badge>
-                    ))}
-                  </div>
+                  <span className="font-semibold mb-1">Tracked Days:</span>
+                  <DateRanges dates={tracker.days} />
                 </div>
               ) : null}
             </div>

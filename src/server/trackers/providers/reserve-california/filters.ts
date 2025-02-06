@@ -1,6 +1,6 @@
 import { SearchResponse } from "./schema";
-import { getDayOfWeek, getFormattedDateWithoutTz } from "@/server/trackers/providers/common/utils";
 import { CampsiteData } from "@/server/trackers/providers/providerAdapter";
+import { getDayOfWeek, getFormattedDateWithoutTz } from "@/lib/date";
 
 /**
  * Finds available units within a facility's data.

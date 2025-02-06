@@ -1,6 +1,6 @@
 export type CampsiteData = {
   date: string;
-  day?: number | null;
+  weekDay?: number | null;
   site: string;
   siteName: string;
   campsite: string;

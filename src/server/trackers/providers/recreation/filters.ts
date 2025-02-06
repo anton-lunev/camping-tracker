@@ -1,6 +1,6 @@
 import { CampsitesResponse } from "@/server/trackers/providers/recreation/schema";
-import { getDayOfWeek, getFormattedDateWithoutTz } from "@/server/trackers/providers/common/utils";
 import { CampsiteData } from "@/server/trackers/providers/providerAdapter";
+import { getDayOfWeek, getFormattedDateWithoutTz } from "@/lib/date";
 
 /** Extracts all available sites from the API response. */
 export function findAvailablePlaces(
@@ -15,7 +15,7 @@ export function findAvailablePlaces(
       if (value === "Available") {
         available.push({
           date: getFormattedDateWithoutTz(date),
-          day: getDayOfWeek(date),
+          weekDay: getDayOfWeek(date),
           site: campsite.site,
           siteName: campsite.site,
           campsite: campsite.loop,
