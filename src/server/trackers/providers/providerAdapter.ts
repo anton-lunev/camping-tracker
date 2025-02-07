@@ -1,10 +1,11 @@
+import { TrackingStateItem } from "@/db/schema";
+
 export type CampsiteData = {
   date: string;
-  weekDay?: number | null;
-  site: string;
+  siteId: string;
   siteName: string;
-  campsite: string;
-  campsiteId: string;
+  campingId: string;
+  campingName: string;
 };
 
 export interface NotificationData {
@@ -17,12 +18,12 @@ export interface NotificationData {
 
 export interface ProviderAdapter {
   findCamp(
-    campId: string | { campingId: string; parkId: string },
+    campId: string,
     days: string[],
     weekDays: number[],
     start: string,
     end: string,
-    handledCampSites: CampsiteData[],
+    trackingState?: TrackingStateItem,
   ): Promise<CampsiteData[]>;
 
   getNotificationData(

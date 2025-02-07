@@ -1,6 +1,6 @@
 import { SearchResponse } from "./schema";
 import { CampsiteData } from "@/server/trackers/providers/providerAdapter";
-import { getDayOfWeek, getFormattedDateWithoutTz } from "@/lib/date";
+import { getFormattedDateWithoutTz } from "@/lib/date";
 
 /**
  * Finds available units within a facility's data.
@@ -17,11 +17,10 @@ export function findAvailablePlaces(data: SearchResponse): CampsiteData[] {
         (item) =>
           ({
             date: getFormattedDateWithoutTz(item.Date),
-            weekDay: getDayOfWeek(item.Date),
-            site: unitInfo.UnitId.toString(),
+            siteId: unitInfo.UnitId.toString(),
             siteName: unitInfo.ShortName,
-            campsite: data.Facility.Name,
-            campsiteId: data.Facility.FacilityId.toString(),
+            campingName: data.Facility.Name,
+            campingId: data.Facility.FacilityId.toString(),
           }) satisfies CampsiteData,
       );
 

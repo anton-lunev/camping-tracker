@@ -3,6 +3,7 @@ import * as reserveCalifornia from "./index";
 import { PROVIDER_CONFIG } from "./config";
 import { router } from "@/server/utils/router";
 import { Logger } from "@/server/utils/logger";
+import { TrackingStateItem } from "@/db/schema";
 
 const logger = Logger.for("ReserveCaliforniaAdapter");
 
@@ -13,7 +14,7 @@ export class ReserveCaliforniaAdapter implements ProviderAdapter {
     weekDays: number[],
     start: string,
     end: string,
-    handledCampSites: CampsiteData[] = [],
+    trackingState?: TrackingStateItem,
   ): Promise<CampsiteData[]> {
     const params = {
       campId,
@@ -21,7 +22,7 @@ export class ReserveCaliforniaAdapter implements ProviderAdapter {
       weekDays,
       start,
       end,
-      handledCampSites,
+      trackingState,
     };
     logger.debug("Searching for available spots", params);
 
@@ -32,7 +33,7 @@ export class ReserveCaliforniaAdapter implements ProviderAdapter {
       weekDays,
       start,
       end,
-      handledCampSites,
+      trackingState,
     );
     logger.info(`Found ${results.length} new camp sites`, params);
 
@@ -45,7 +46,7 @@ export class ReserveCaliforniaAdapter implements ProviderAdapter {
     const [parkId, campingId] = id.split(":");
     return {
       results,
-      campingName: results[0].campsite,
+      campingName: results[0].campingName,
       campingUrl: router.resolve(PROVIDER_CONFIG.CAMPGROUND_URL, {
         parkId,
         campingId,

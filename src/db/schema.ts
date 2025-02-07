@@ -17,6 +17,12 @@ export type Camping = {
   provider: string;
 };
 
+export type TrackingStateItem = {
+  campingId: string;
+  sites: { date: string; siteId: string; isFree: boolean }[];
+};
+export type TrackingState = Record<string, TrackingStateItem>;
+
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: false, mode: "string" })
@@ -44,6 +50,10 @@ export const trackers = pgTable("trackers", {
   owner: uuid("owner")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  trackingState: json("tracking_state")
+    .$type<TrackingState>()
+    .default({})
+    .notNull(),
 });
 export type Tracker = typeof trackers.$inferSelect;
 

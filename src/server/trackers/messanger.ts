@@ -25,7 +25,7 @@ function formatCampsiteLink(
   campsiteData: CampsiteData,
   campsiteUrl?: string,
 ): string {
-  const campsiteName = campsiteData.siteName ?? campsiteData.site;
+  const campsiteName = campsiteData.siteName ?? campsiteData.siteId;
 
   if (!campsiteUrl) return campsiteName;
   return `[${campsiteName}](${router.resolve(campsiteUrl, campsiteData)})`;

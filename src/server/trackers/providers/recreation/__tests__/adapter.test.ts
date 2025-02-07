@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { RecreationAdapter } from "../adapter";
 import { mockResponse } from "./mockResponse";
+import { getTrackingStateItem } from "@/server/trackers/utils";
 
 // Mock fetch
 const global = globalThis;
@@ -27,17 +28,15 @@ describe("RecreationAdapter", () => {
       [],
       mockStartDate,
       mockEndDate,
-      [], // Add empty array for alreadyFoundCampSites
     );
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({
       date: "2024-03-20",
-      weekDay: 3,
-      site: "A1",
+      campingId: "site1",
+      campingName: "Loop A",
+      siteId: "A1",
       siteName: "A1",
-      campsite: "Loop A",
-      campsiteId: "site1",
     });
   });
 
@@ -48,17 +47,15 @@ describe("RecreationAdapter", () => {
       [4], // Only Thursdays
       mockStartDate,
       mockEndDate,
-      [], // Add empty array for alreadyFoundCampSites
     );
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({
       date: "2024-03-21",
-      weekDay: 4, // Thursday
-      site: "A2",
+      campingId: "site2",
+      campingName: "Loop A",
+      siteId: "A2",
       siteName: "A2",
-      campsite: "Loop A",
-      campsiteId: "site2",
     });
   });
 
@@ -70,7 +67,6 @@ describe("RecreationAdapter", () => {
       [],
       mockStartDate,
       mockEndDate,
-      [],
     );
 
     // Second call should return empty array since all sites were found in first call
@@ -80,7 +76,7 @@ describe("RecreationAdapter", () => {
       [],
       mockStartDate,
       mockEndDate,
-      firstResults, // Pass first results as already found sites
+      getTrackingStateItem(mockCampId, firstResults), // Pass first results as already found sites
     );
 
     expect(results).toHaveLength(0);

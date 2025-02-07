@@ -1,3 +1,5 @@
+import { CampProvider } from "@/server/trackers/providers/providerAdapterFactory";
+
 interface ParsedCampingUrl {
   provider: string;
   campingId: string;
@@ -11,11 +13,11 @@ export function parseCampingUrl(campingUrl: string): ParsedCampingUrl {
     const pathParts = url.hash.split("/");
     const campingId = pathParts[pathParts.length - 1];
     const parkId = pathParts[pathParts.length - 2];
-    return { provider: "reservecalifornia", parkId, campingId };
+    return { provider: CampProvider.RESERVE_CALIFORNIA, parkId, campingId };
   } else if (url.hostname.includes("recreation.gov")) {
     const pathParts = url.pathname.split("/");
     const campingId = pathParts[pathParts.length - 1]; // Campground ID
-    return { provider: "recreation.gov", campingId };
+    return { provider: CampProvider.RECREATION, campingId };
   } else {
     throw new Error("Unsupported provider");
   }

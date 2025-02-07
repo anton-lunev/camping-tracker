@@ -72,6 +72,7 @@ export const trackers = pgTable(
     active: boolean().default(false).notNull(),
     interval: integer().default(60).notNull(),
     owner: uuid().notNull(),
+    trackingState: json("tracking_state").default({}).notNull(),
   },
   (table) => [
     foreignKey({

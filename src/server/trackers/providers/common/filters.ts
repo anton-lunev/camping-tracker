@@ -1,22 +1,23 @@
-import { isNil } from "lodash";
 import { CampsiteData } from "@/server/trackers/providers/providerAdapter";
-import { getFormattedDateWithoutTz } from "@/lib/date";
+import { getDayOfWeek, getFormattedDateWithoutTz } from "@/lib/date";
+import { TrackingStateItem } from "@/db/schema";
 
 /** Filters camp data based on specific weekdays. */
 export function filterByWeekDay(campData: CampsiteData, weekDays: number[]) {
   if (!weekDays.length) return true; // ignore filter if no weekdays provided
-  return !isNil(campData.weekDay) && weekDays.includes(campData.weekDay);
+  const weekDay = getDayOfWeek(campData.date);
+  return weekDay ? weekDays.includes(weekDay) : false;
 }
 
 /**
  * Filters out campsites already found in the past.
  */
 export function keepOnlyNew(
-  handledCampsites: CampsiteData[],
+  trackingState: TrackingStateItem | undefined,
   campData: CampsiteData,
 ): boolean {
-  return !handledCampsites.find(
-    (camp) => campData.date === camp.date && campData.site === camp.site,
+  return !trackingState?.sites.find(
+    (camp) => campData.date === camp.date && campData.siteId === camp.siteId,
   );
 }
 

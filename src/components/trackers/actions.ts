@@ -15,6 +15,7 @@ import {
   updateTrackerDb,
 } from "@/db/queries/trackers";
 import { z } from "zod";
+import { CampProvider } from "@/server/trackers/providers/providerAdapterFactory";
 
 export async function getSubs() {
   const supabase = await createClient();
@@ -67,7 +68,7 @@ const recreationGovSchema = z.object({
 });
 
 const campingDataFetchers: CampingDataFetchers = {
-  reservecalifornia: async (id: string) => {
+  [CampProvider.RESERVE_CALIFORNIA]: async (id: string) => {
     const response = await fetch(
       `https://calirdr.usedirect.com/RDR/rdr/fd/facilities/${id}`,
       { headers: { "Content-Type": "application/json" } },
@@ -81,7 +82,7 @@ const campingDataFetchers: CampingDataFetchers = {
     const data = reserveCaliforniaSchema.parse(rawData);
     return { name: data.Name };
   },
-  "recreation.gov": async (id: string) => {
+  [CampProvider.RECREATION]: async (id: string) => {
     const response = await fetch(
       `https://www.recreation.gov/api/camps/campgrounds/${id}`,
       { headers: { "Content-Type": "application/json" } },

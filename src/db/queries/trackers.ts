@@ -1,6 +1,6 @@
 import { db } from "../";
 import { asc, eq } from "drizzle-orm";
-import { trackers } from "../schema";
+import { trackers, TrackingState } from "../schema";
 
 export type Camping = {
   id: string;
@@ -20,9 +20,13 @@ export type Tracker = {
   active: boolean;
   interval: number;
   owner: string;
+  trackingState?: TrackingState;
 };
 
-export type NewTracker = Omit<Tracker, "id" | "createdAt" | "updatedAt">;
+export type NewTracker = Omit<
+  Tracker,
+  "id" | "createdAt" | "updatedAt" | "trackingState"
+>;
 
 export function getActiveTrackers() {
   return db.query.trackers.findMany({
@@ -42,7 +46,6 @@ export function getUserTrackers(userId: string) {
 }
 
 export function addTrackerDb(tracker: NewTracker) {
-  console.log(tracker);
   return db.insert(trackers).values(tracker).returning();
 }
 

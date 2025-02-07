@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ReserveCaliforniaAdapter } from "../adapter";
 import { mockResponse } from "./mockResponse";
+import { getTrackingStateItem } from "@/server/trackers/utils";
 
 // Mock fetch
 const global = globalThis;
@@ -34,11 +35,10 @@ describe("ReserveCaliforniaAdapter", () => {
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({
       date: "2024-03-20",
-      weekDay: 3, // Wednesday
-      site: "1",
+      campingId: "456",
+      campingName: "Test Campground",
+      siteId: "1",
       siteName: "001",
-      campsite: "Test Campground",
-      campsiteId: "456",
     });
   });
 
@@ -54,11 +54,10 @@ describe("ReserveCaliforniaAdapter", () => {
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({
       date: "2024-03-20",
-      weekDay: 3,
-      site: "1",
+      campingId: "456",
+      campingName: "Test Campground",
+      siteId: "1",
       siteName: "001",
-      campsite: "Test Campground",
-      campsiteId: "456",
     });
   });
 
@@ -70,7 +69,6 @@ describe("ReserveCaliforniaAdapter", () => {
       [],
       mockStartDate,
       mockEndDate,
-      [],
     );
 
     // Second call should return empty array since all sites were found in first call
@@ -80,7 +78,7 @@ describe("ReserveCaliforniaAdapter", () => {
       [],
       mockStartDate,
       mockEndDate,
-      firstResults, // Pass first results as already found sites
+      getTrackingStateItem(mockCampId, firstResults), // Pass first results as already found sites
     );
 
     expect(results).toHaveLength(0);

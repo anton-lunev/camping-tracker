@@ -6,7 +6,7 @@ import {
   keepOnlyNew,
 } from "@/server/trackers/providers/common/filters";
 import { Logger } from "@/server/utils/logger";
-import { CampsiteData } from "@/server/trackers/providers/providerAdapter";
+import { TrackingStateItem } from "@/db/schema";
 
 export function findAvailableSpots(
   params: { campingId: string; parkId: string },
@@ -14,14 +14,14 @@ export function findAvailableSpots(
   weekDays: number[],
   start: string,
   end: string,
-  handledCampSites: CampsiteData[],
+  trackingState?: TrackingStateItem,
 ) {
   return fetchData(params.campingId, start, end).then((response) => {
     const matchingSites = findAvailablePlaces(response)
       .filter((item) => filterByWeekDay(item, weekDays))
       .filter((item) => filterCertainDays(item, days));
     const result = matchingSites.filter((item) =>
-      keepOnlyNew(handledCampSites, item),
+      keepOnlyNew(trackingState, item),
     );
 
     Logger.info(

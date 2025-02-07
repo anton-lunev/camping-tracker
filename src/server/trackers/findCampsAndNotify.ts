@@ -9,7 +9,7 @@ import {
   postToChannel,
 } from "@/server/trackers/messanger";
 import { Logger } from "@/server/utils/logger";
-import { CampsiteData } from "@/server/trackers/providers/providerAdapter"; // Register adapters
+import { TrackingStateItem } from "@/db/schema";
 
 // Register adapters
 ProviderAdapterFactory.registerAdapter(
@@ -21,9 +21,6 @@ ProviderAdapterFactory.registerAdapter(
   new ReserveCaliforniaAdapter(),
 );
 
-// TODO: Move this to a database
-const handledCampSites: CampsiteData[] = [];
-
 const logger = Logger.for("findCampsAndNotify");
 
 // Main function to find camps
@@ -34,6 +31,7 @@ export const findCampsAndNotify = async (
   weekDays: number[],
   start: string,
   end: string,
+  trackingState: TrackingStateItem,
 ) => {
   try {
     const adapter = ProviderAdapterFactory.getAdapter(provider);
@@ -43,12 +41,10 @@ export const findCampsAndNotify = async (
       weekDays,
       start,
       end,
-      handledCampSites,
+      trackingState,
     );
 
     if (results.length) {
-      handledCampSites.push(...results);
-
       const notificationData = adapter.getNotificationData(results, campId);
       if (notificationData) {
         try {

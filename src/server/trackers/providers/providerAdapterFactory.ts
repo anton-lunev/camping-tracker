@@ -1,8 +1,8 @@
 import { ProviderAdapter } from "./providerAdapter";
 
 export enum CampProvider {
-  RECREATION = "RECREATION",
-  RESERVE_CALIFORNIA = "RESERVE_CALIFORNIA",
+  RECREATION = "recreation",
+  RESERVE_CALIFORNIA = "reservecalifornia",
 }
 
 export function getProviderFromString(provider: string): CampProvider {
