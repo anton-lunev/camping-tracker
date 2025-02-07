@@ -11,6 +11,7 @@ import {
   addTrackerDb,
   getUserTrackers,
   NewTracker,
+  removeTrackerDb,
   Tracker,
   updateTrackerDb,
 } from "@/db/queries/trackers";
@@ -50,6 +51,16 @@ export async function createTracker(newTracker: Omit<NewTracker, "owner">) {
       startTracker(tracker.id.toString(), tracker.interval);
       revalidatePath("/");
     }
+  }
+}
+
+export async function removeTracker(trackerId: string) {
+  const supabase = await createClient();
+  const { data: user } = await supabase.auth.getUser();
+  if (user?.user?.id) {
+    stopTracker(trackerId);
+    await removeTrackerDb(trackerId);
+    revalidatePath("/");
   }
 }
 

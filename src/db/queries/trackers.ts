@@ -52,3 +52,7 @@ export function addTrackerDb(tracker: NewTracker) {
 export function updateTrackerDb(tracker: Tracker) {
   return db.update(trackers).set(tracker).where(eq(trackers.id, tracker.id));
 }
+
+export function removeTrackerDb(trackerId: string) {
+  return db.delete(trackers).where(eq(trackers.id, trackerId));
+}

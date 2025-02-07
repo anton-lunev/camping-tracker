@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useState } from "react";
-import { createTracker, updateTracker } from "./actions";
+import { createTracker, removeTracker, updateTracker } from "./actions";
 import { Button } from "@/components/ui/button";
 import { NewTracker, Tracker } from "@/db/queries/trackers";
 
@@ -34,6 +34,10 @@ export function Trackers({ trackers }: TrackersProps) {
   };
   const handleCreate = (newTracker: NewTracker) => {
     createTracker(newTracker);
+    handleCancel();
+  };
+  const handleRemove = (tracker: Tracker) => {
+    removeTracker(tracker.id);
     handleCancel();
   };
 
@@ -74,6 +78,7 @@ export function Trackers({ trackers }: TrackersProps) {
           <TrackerForm
             tracker={editingTracker ?? undefined}
             onSave={editingTracker ? handleSave : handleCreate}
+            onRemove={editingTracker && !isCreating ? handleRemove : undefined}
             onCancel={handleCancel}
           />
         </DialogContent>

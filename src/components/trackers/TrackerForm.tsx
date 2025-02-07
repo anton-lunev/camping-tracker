@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/popover";
 import { getCampingData } from "./actions";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { Trash2Icon, X } from "lucide-react";
 import { parseCampingUrl } from "@/components/trackers/utils";
 import { Camping, NewTracker } from "@/db/queries/trackers";
 import { DaysOfWeek } from "@/components/trackers/DaysOfWeek";
@@ -21,6 +21,7 @@ import { formatDate, toDate } from "@/lib/date";
 interface TrackerFormProps<T extends NewTracker> {
   tracker?: T;
   onSave: (tracker: T) => void;
+  onRemove?: (tracker: T) => void;
   onCancel: () => void;
 }
 
@@ -48,6 +49,7 @@ async function getCampingDataByUrl(campingUrl: string): Promise<Camping> {
 export default function TrackerForm<T extends NewTracker>({
   tracker,
   onSave,
+  onRemove,
   onCancel,
 }: TrackerFormProps<T>) {
   const [editedTracker, setEditedTracker] = useState<T>(
@@ -225,11 +227,19 @@ export default function TrackerForm<T extends NewTracker>({
       </div>
 
       <div>
-        <Label htmlFor="tracked-days">Tracked Days</Label>
+        <Label className="mb-1">Week Days</Label>
+        <DaysOfWeek
+          selection={editedTracker.weekDays}
+          onChange={handleWeekDaysChange}
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="specific-days">Specific Days</Label>
         <Popover>
           <PopoverTrigger asChild>
             <Button
-              id="tracked-days"
+              id="specific-days"
               variant="outline"
               className="w-full justify-start text-left font-normal mb-2"
             >
@@ -245,19 +255,13 @@ export default function TrackerForm<T extends NewTracker>({
             />
           </PopoverContent>
         </Popover>
-        <DateRanges
-          dates={editedTracker.days}
-          onRemove={removeDays}
-          variant="secondary"
-        />
-      </div>
-
-      <div>
-        <Label className="mb-1">Week Days</Label>
-        <DaysOfWeek
-          selection={editedTracker.weekDays}
-          onChange={handleWeekDaysChange}
-        />
+        <div className="flex flex-wrap gap-2">
+          <DateRanges
+            dates={editedTracker.days}
+            onRemove={removeDays}
+            variant="secondary"
+          />
+        </div>
       </div>
 
       <div>
@@ -295,6 +299,19 @@ export default function TrackerForm<T extends NewTracker>({
       </div>
 
       <div className="flex justify-end space-x-2">
+        {onRemove ? (
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={() => {
+              onRemove(editedTracker);
+            }}
+            size="icon"
+            className="mr-auto"
+          >
+            <Trash2Icon />
+          </Button>
+        ) : null}
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancel
         </Button>

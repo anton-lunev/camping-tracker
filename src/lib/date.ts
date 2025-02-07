@@ -66,7 +66,7 @@ export function groupConsecutiveDates(
   if (!dates?.length) return [];
 
   // Clone to avoid mutating input, then sort
-  const sortedDates = [...dates]
+  const sortedDates = [...new Set(dates).values()]
     .map(toDate)
     .sort((a, b) => a.getTime() - b.getTime());
 

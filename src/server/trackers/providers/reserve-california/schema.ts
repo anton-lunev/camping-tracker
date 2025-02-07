@@ -6,7 +6,7 @@ const sliceSchema = z.object({
   IsBlocked: z.boolean(),
   IsWalkin: z.boolean(),
   ReservationId: z.number(),
-  Lock: z.null(),
+  Lock: z.string().nullish(),
   MinStay: z.number(),
   IsReservationDraw: z.boolean(),
 });
@@ -45,8 +45,8 @@ const unitSchema = z.object({
   IsFavourite: z.boolean(),
   Slices: z.record(sliceSchema),
   OrderByRaw: z.number(),
-  StartTime: z.null(),
-  EndTime: z.null(),
+  StartTime: z.string().nullish(),
+  EndTime: z.string().nullish(),
 });
 
 const restrictionsSchema = z.object({
@@ -85,8 +85,8 @@ export const facilitySchema = z.object({
   IsReservationDrawActive: z.boolean(),
   DrawBookingStartDate: z.string(),
   DrawBookingEndDate: z.string(),
-  ReservationDrawDetail: z.null(),
-  WalkinCounts: z.null(),
+  ReservationDrawDetail: z.any().nullish(),
+  WalkinCounts: z.any().nullish(),
 });
 
 export type Facility = z.infer<typeof facilitySchema>;

@@ -1,9 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Tracker } from "@/db/queries/trackers";
-import { formatDate, toDate, WEEK_DAYS } from "@/lib/date";
+import { WEEK_DAYS } from "@/lib/date";
 import { DateRanges } from "@/components/trackers/DateRanges";
+import { Button } from "@/components/ui/button";
+import { EditIcon } from "lucide-react";
 
 interface CampingTrackerCardsProps {
   trackers: Tracker[];
@@ -17,23 +18,33 @@ export default function CampingTrackerCards({
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {trackers.map((tracker) => (
-        <Card key={tracker.id} className="w-full flex flex-col">
+        <Card
+          key={tracker.id}
+          className="w-full flex flex-col md:min-w-[300px] md:max-w-[350px]"
+        >
           <CardHeader>
-            <CardTitle className="text-lg font-semibold flex items-center justify-between gap-2">
+            <div className="flex items-center justify-center">
               <Badge variant={tracker.active ? "default" : "secondary"}>
                 {tracker.active ? "Active" : "Inactive"}
               </Badge>
-              <p className="text-sm text-muted-foreground font-light">
-                Created: {formatDate(toDate(tracker.createdAt), "PPP")}
-              </p>
-            </CardTitle>
+
+              <div className="ml-auto flex gap-1">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => onEdit(tracker.id)}
+                >
+                  <EditIcon />
+                </Button>
+              </div>
+            </div>
           </CardHeader>
 
           <CardContent className="flex flex-col flex-1 gap-4">
             <div className="space-y-2">
               <div>
-                <span className="font-semibold">Campings:</span>
-                <div className="flex flex-wrap gap-2 mt-1">
+                <span className="font-semibold mb-2">Campings:</span>
+                <div className="flex flex-wrap gap-2">
                   {tracker.campings.map((camping) => (
                     <Badge key={camping.id} variant="secondary">
                       {camping.name}
@@ -41,41 +52,30 @@ export default function CampingTrackerCards({
                   ))}
                 </div>
               </div>
+
               <div>
-                <span className="font-semibold">Date Range:</span>
-                <p>
-                  {[tracker.startDate, tracker.endDate]
-                    .map((date) => formatDate(toDate(date), "PP"))
-                    .join(" - ")}
-                </p>
+                <span className="font-semibold mb-2">Tracking Period:</span>
+                <div className="flex">
+                  <DateRanges dates={[tracker.startDate, tracker.endDate]} />
+                </div>
               </div>
 
-              {tracker.weekDays?.length ? (
+              {tracker.weekDays?.length || tracker.days?.length ? (
                 <div>
-                  <span className="font-semibold">Week Days:</span>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {tracker.weekDays?.map((day) => (
-                      <Badge key={day} variant="outline">
+                  <span className="font-semibold mb-2">Tracking Days:</span>
+                  <div className="flex flex-wrap gap-2">
+                    {tracker?.weekDays.map((day) => (
+                      <Badge variant="secondary" key={day}>
                         {WEEK_DAYS[day]}
                       </Badge>
                     ))}
+                    {tracker.days?.length ? (
+                      <DateRanges variant="secondary" dates={tracker.days} />
+                    ) : null}
                   </div>
                 </div>
               ) : null}
-              {tracker.days?.length ? (
-                <div>
-                  <span className="font-semibold mb-1">Tracked Days:</span>
-                  <DateRanges dates={tracker.days} />
-                </div>
-              ) : null}
             </div>
-            <Button
-              className="mt-auto w-full"
-              variant="outline"
-              onClick={() => onEdit(tracker.id)}
-            >
-              Edit Tracker
-            </Button>
           </CardContent>
         </Card>
       ))}
