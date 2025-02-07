@@ -1,72 +1,59 @@
-import schedule, { Job } from "node-schedule";
+import { SimpleIntervalJob, Task, ToadScheduler } from "toad-scheduler";
 import { Logger } from "@/server/utils/logger";
 
 const logger = Logger.for("Scheduler");
 
-/**
- * Convert seconds into a cron expression for recurring intervals.
- * @param seconds - Interval in seconds.
- * @returns Cron syntax string.
- */
-export function secondsToCron(seconds: number): string {
-  if (seconds <= 0) {
-    throw new Error("Seconds must be greater than 0.");
-  }
-
-  // For intervals <= 60 seconds
-  if (seconds <= 60) {
-    return `*/${seconds} * * * * *`; // Every "seconds" seconds
-  }
-
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-
-  // For intervals <= 3600 seconds (1 hour)
-  if (minutes < 60) {
-    return remainingSeconds === 0
-      ? `*/${minutes} * * * *` // Every "minutes"
-      : `${remainingSeconds} */${minutes} * * * *`; // Every "minutes" at specific seconds
-  }
-
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
-  // For intervals > 3600 seconds (1 hour)
-  return `${remainingSeconds} ${remainingMinutes === 0 ? "*" : `*/${remainingMinutes}`} */${hours} * * *`;
+function getGlobal() {
+  return global as unknown as Global & { scheduler: ToadScheduler };
 }
+
+/** {@see https://github.com/kibertoad/toad-scheduler} */
+function getScheduler() {
+  // There is a bug where this file has multiple instances on server startup.
+  // So use global object to store scheduler instance.
+  if (!getGlobal().scheduler) {
+    getGlobal().scheduler = new ToadScheduler();
+  }
+  return getGlobal().scheduler;
+}
+
+export const scheduler = getScheduler();
 
 // Interface for job metadata
 interface JobMeta {
   id: string;
-  rule: string | Date; // Cron-like schedule or a specific date
+  interval: number; // Interval in seconds
   handler: (id: string) => Promise<void>; // Async function for job logic
 }
-
-// Map to store active jobs
-const activeJobs: Map<string, Job> = new Map();
 
 /**
  * Create and start a scheduled job.
  * @param jobMeta - Metadata for the job.
  */
 export function createJob(jobMeta: JobMeta): void {
-  const { id, rule, handler } = jobMeta;
+  const { id, interval, handler } = jobMeta;
 
-  if (activeJobs.has(id)) {
-    logger.debug(`Job with ID "${id}" already exists.`);
-    return;
-  }
-
-  const job = schedule.scheduleJob(rule, async () => {
-    logger.debug(`Running job "${id}" at ${new Date().toISOString()}`);
+  const task = new Task(id, async () => {
+    logger.debug(
+      `[Create Job] Running job "${id}" at ${new Date().toISOString()}`,
+    );
     try {
       await handler(id);
     } catch (error) {
-      logger.error(`Error in job "${id}":`, error);
+      logger.error(`[Create Job] Error in job "${id}":`, error);
     }
   });
 
-  activeJobs.set(id, job);
-  logger.debug(`Scheduled job "${id}" with rule: ${rule}`);
+  const job = new SimpleIntervalJob(
+    { seconds: interval, runImmediately: true },
+    task,
+    { id, preventOverrun: true },
+  );
+  scheduler.addSimpleIntervalJob(job);
+
+  logger.debug(
+    `[Create Job] Scheduled job "${id}" with interval: ${interval} seconds`,
+  );
 }
 
 /**
@@ -74,14 +61,15 @@ export function createJob(jobMeta: JobMeta): void {
  * @param jobId - Unique identifier for the job to stop.
  */
 export function stopJob(jobId: string): void {
-  const job = activeJobs.get(jobId);
+  const hasJob = scheduler.existsById(jobId);
 
-  if (job) {
-    job.cancel();
-    activeJobs.delete(jobId);
-    logger.debug(`Stopped and removed job "${jobId}"`);
+  if (hasJob) {
+    scheduler.stopById(jobId);
+    scheduler.removeById(jobId);
+
+    logger.debug(`[Stop Job] Stopped and removed job "${jobId}"`);
   } else {
-    logger.warn(`No job found with ID "${jobId}"`);
+    logger.warn(`[Stop Job] No job found with ID "${jobId}"`);
   }
 }
 
@@ -89,13 +77,12 @@ export function stopJob(jobId: string): void {
  * Stop all active jobs.
  */
 export function stopAllJobs(): void {
-  activeJobs.forEach((job, jobId) => {
-    job.cancel();
-    logger.debug(`Stopped job "${jobId}"`);
+  scheduler.stop();
+  listJobs().forEach((jobId) => {
+    scheduler.removeById(jobId);
   });
 
-  activeJobs.clear();
-  logger.debug("All jobs stopped.");
+  logger.debug("[Stop All Jobs] All jobs stopped.");
 }
 
 /**
@@ -103,5 +90,6 @@ export function stopAllJobs(): void {
  * @returns An array of active job IDs.
  */
 export function listJobs(): string[] {
-  return Array.from(activeJobs.keys());
+  const jobs = scheduler.getAllJobs();
+  return jobs.map((job) => job.id) as string[];
 }

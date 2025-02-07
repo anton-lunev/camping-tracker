@@ -1,5 +1,7 @@
 import { startTrackers } from "@/server/scheduler/trackers";
 
 export function register() {
-  startTrackers();
+  if (process.env.NEXT_RUNTIME === "nodejs") {
+    startTrackers();
+  }
 }
