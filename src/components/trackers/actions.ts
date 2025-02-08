@@ -1,6 +1,5 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import {
   restartTracker,
@@ -17,20 +16,19 @@ import {
 } from "@/db/queries/trackers";
 import { z } from "zod";
 import { CampProvider } from "@/server/trackers/providers/providerAdapterFactory";
+import { currentUser } from "@clerk/nextjs/server";
 
 export async function getSubs() {
-  const supabase = await createClient();
-  const { data: user } = await supabase.auth.getUser();
-  if (user?.user?.id) {
-    return await getUserTrackers(user.user.id);
+  const user = await currentUser();
+  if (user?.id) {
+    return await getUserTrackers(user.id);
   }
   return [];
 }
 
 export async function updateTracker(data: Tracker) {
-  const supabase = await createClient();
-  const { data: user } = await supabase.auth.getUser();
-  if (user?.user?.id) {
+  const user = await currentUser();
+  if (user?.id) {
     await updateTrackerDb(data);
     if (data.active) {
       restartTracker(data.id.toString(), data.interval);
@@ -42,10 +40,9 @@ export async function updateTracker(data: Tracker) {
 }
 
 export async function createTracker(newTracker: Omit<NewTracker, "owner">) {
-  const supabase = await createClient();
-  const { data: user } = await supabase.auth.getUser();
-  if (user?.user?.id) {
-    const data = await addTrackerDb({ ...newTracker, owner: user.user.id });
+  const user = await currentUser();
+  if (user?.id) {
+    const data = await addTrackerDb({ ...newTracker, owner: user.id });
     const [tracker] = data;
     if (tracker) {
       startTracker(tracker.id.toString(), tracker.interval);
@@ -55,9 +52,8 @@ export async function createTracker(newTracker: Omit<NewTracker, "owner">) {
 }
 
 export async function removeTracker(trackerId: string) {
-  const supabase = await createClient();
-  const { data: user } = await supabase.auth.getUser();
-  if (user?.user?.id) {
+  const user = await currentUser();
+  if (user?.id) {
     stopTracker(trackerId);
     await removeTrackerDb(trackerId);
     revalidatePath("/");

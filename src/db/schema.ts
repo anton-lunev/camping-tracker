@@ -9,7 +9,6 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
 
 export type Camping = {
   id: string;
@@ -22,15 +21,6 @@ export type TrackingStateItem = {
   sites: { date: string; siteId: string; isFree: boolean }[];
 };
 export type TrackingState = Record<string, TrackingStateItem>;
-
-export const users = pgTable("users", {
-  id: uuid("id").primaryKey().notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: false, mode: "string" })
-    .defaultNow()
-    .notNull(),
-  email: text("email").notNull(),
-});
-export type User = typeof users.$inferSelect;
 
 export const trackers = pgTable("trackers", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
@@ -47,9 +37,7 @@ export const trackers = pgTable("trackers", {
   days: date("days").array().default([]).notNull(),
   active: boolean("active").default(false).notNull(),
   interval: integer("interval").default(60).notNull(),
-  owner: uuid("owner")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+  owner: text("owner").notNull(),
   trackingState: json("tracking_state")
     .$type<TrackingState>()
     .default({})
@@ -58,48 +46,7 @@ export const trackers = pgTable("trackers", {
 export type Tracker = typeof trackers.$inferSelect;
 
 export const settings = pgTable("settings", {
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+  userId: text("user_id").notNull(),
   telegramChannelId: varchar("telegram_channel_id", { length: 255 }),
 });
 export type Settings = typeof settings.$inferSelect;
-
-export const events = pgTable("events", {
-  id: uuid("id").defaultRandom().primaryKey().notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "string" })
-    .defaultNow()
-    .notNull(),
-  trackerId: uuid("tracker_id")
-    .notNull()
-    .references(() => trackers.id, { onDelete: "cascade" }),
-  openSpots: json("open_spots"),
-});
-export type Event = typeof events.$inferSelect;
-
-export const trackersRelations = relations(trackers, ({ one, many }) => ({
-  events: many(events),
-  users: one(users),
-}));
-
-export const usersRelations = relations(users, ({ one, many }) => ({
-  settings: one(settings, {
-    fields: [users.id],
-    references: [settings.userId],
-  }),
-  trackers: many(trackers),
-}));
-
-export const settingsRelations = relations(settings, ({ one }) => ({
-  users: one(users, {
-    fields: [settings.userId],
-    references: [users.id],
-  }),
-}));
-
-export const eventsRelations = relations(events, ({ one }) => ({
-  tracker: one(trackers, {
-    fields: [events.trackerId],
-    references: [trackers.id],
-  }),
-}));
