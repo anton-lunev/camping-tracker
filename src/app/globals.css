@@ -141,3 +141,17 @@
     @apply bg-background text-foreground;
   }
 }
+
+.cl-footer > [class^="cl-internal-"]:has(a[aria-label="Clerk logo"]) {
+  display: none;
+}
+
+.cl-card {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.cl-footer {
+  margin-top: 0;
+  padding-top: 0;
+}
