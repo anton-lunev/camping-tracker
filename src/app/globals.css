@@ -142,7 +142,7 @@
   }
 }
 
-.cl-footer > [class^="cl-internal-"]:has(a[aria-label="Clerk logo"]) {
+:is(.cl-footer, .cl-userButtonPopoverFooter) > [class^="cl-internal-"]:has(a[aria-label="Clerk logo"]) {
   display: none;
 }
 
