@@ -6,22 +6,8 @@ import {
   filterFreeSpots,
   keepOnlyNew,
 } from "@/server/trackers/common/filters";
-
-// Define the CampsiteData type as provided
-export type CampsiteData = {
-  date: string;
-  siteId: string;
-  siteName: string;
-  campingId: string;
-  campingName: string;
-  isFree: boolean;
-};
-
-// Define the TrackingStateItem type as provided
-export type TrackingStateItem = {
-  campingId: string;
-  sites: { date: string; siteId: string; isFree: boolean }[];
-};
+import { CampsiteData } from "@/server/trackers/providers/providerAdapter";
+import { TrackingStateItem } from "@/db/schema";
 
 // Sample data as provided
 const sampleData: CampsiteData[] = [
