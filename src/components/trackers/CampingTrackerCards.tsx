@@ -5,6 +5,7 @@ import { DateRanges } from "@/components/trackers/DateRanges";
 import { Button } from "@/components/ui/button";
 import { EditIcon } from "lucide-react";
 import type { Tracker } from "@/db/schema";
+import { CampingBadge } from "@/components/trackers/CampingBadge";
 
 function getStats(tracker: Tracker, campingId: string) {
   return tracker.trackingState[campingId] ?? null;
@@ -44,24 +45,13 @@ function CampingTrackerCard({ tracker, onEdit }: CampingTrackerCardProps) {
           <div>
             <span className="font-semibold mb-2">Campings:</span>
             <div className="flex flex-wrap gap-2">
-              {tracker.campings.map((camping) => {
-                const stats = getStats(tracker, camping.id);
-                return (
-                  <Badge
-                    key={camping.id}
-                    variant="secondary"
-                    className="flex gap-2"
-                  >
-                    <span>{camping.name}</span>
-
-                    {stats?.sites.length ? (
-                      <Badge variant="default" className="px-1 -mr-2">
-                        {stats.sites.length}
-                      </Badge>
-                    ) : null}
-                  </Badge>
-                );
-              })}
+              {tracker.campings.map((camping) => (
+                <CampingBadge
+                  key={camping.id}
+                  camping={camping}
+                  stats={getStats(tracker, camping.id)}
+                />
+              ))}
             </div>
           </div>
 
