@@ -1,43 +1,23 @@
 import { CampsiteData, ProviderAdapter } from "../providerAdapter";
-import * as reserveCalifornia from "./index";
 import { PROVIDER_CONFIG } from "./config";
 import { router } from "@/server/utils/router";
-import { Logger } from "@/server/utils/logger";
-import { TrackingStateItem } from "@/db/schema";
-
-const logger = Logger.for("ReserveCaliforniaAdapter");
+import { fetchData } from "@/server/trackers/providers/reserve-california/fetch";
+import { getCampsiteData } from "./getCampsiteData";
+import { parseId } from "@/server/trackers/providers/reserve-california/parseId";
 
 export class ReserveCaliforniaAdapter implements ProviderAdapter {
-  async findCamp(
-    campId: string,
-    days: string[],
-    weekDays: number[],
-    start: string,
-    end: string,
-    trackingState?: TrackingStateItem,
-  ): Promise<CampsiteData[]> {
-    const params = {
-      campId,
-      days,
-      weekDays,
-      start,
-      end,
-      trackingState,
-    };
-    logger.debug("Searching for available spots", params);
-
-    const [parkId, campingId] = campId.split(":");
-    const results = await reserveCalifornia.findAvailableSpots(
-      { parkId, campingId },
-      days,
-      weekDays,
-      start,
-      end,
-      trackingState,
-    );
-    logger.info(`Found ${results.length} new camp sites`, params);
-
-    return results;
+  async getCampsiteData(params: {
+    campingId: string;
+    startDate: string;
+    endDate: string;
+  }) {
+    const { campingId } = parseId(params.campingId);
+    const response = await fetchData({
+      campingId,
+      startDate: params.startDate,
+      endDate: params.endDate,
+    });
+    return getCampsiteData(response);
   }
 
   getNotificationData(results: CampsiteData[], id: string) {

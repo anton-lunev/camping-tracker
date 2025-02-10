@@ -1,84 +1,89 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { RecreationAdapter } from "../adapter";
-import { mockResponse } from "./mockResponse";
-import { getTrackingStateItem } from "@/server/trackers/utils";
+import { setupServer } from "msw/node";
+import { http, HttpResponse } from "msw";
+import { PROVIDER_CONFIG } from "@/server/trackers/providers/recreation/config";
+import { mockResponse } from "@/server/trackers/providers/recreation/__tests__/mockResponse";
+import { router } from "@/server/utils/router";
 
-// Mock fetch
-const global = globalThis;
-global.fetch = vi.fn();
+const campingId = "123456";
+const startDate = "2024-03-01";
+const endDate = "2024-03-31";
+
+export const restHandlers = [
+  http.get(router.resolve(PROVIDER_CONFIG.API_URL, { campingId }), () => {
+    return HttpResponse.json(mockResponse);
+  }),
+];
+const server = setupServer(...restHandlers);
 
 describe("RecreationAdapter", () => {
   const adapter = new RecreationAdapter();
-  const mockCampId = "123456";
-  const mockStartDate = "2024-03-01";
-  const mockEndDate = "2024-03-31";
+
+  beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+  afterAll(() => server.close());
+  afterEach(() => server.resetHandlers());
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockResponse),
-    });
   });
 
-  it("should find available campsites on specific days", async () => {
-    const results = await adapter.findCamp(
-      mockCampId,
-      ["2024-03-20"], // Only looking for March 20
-      [],
-      mockStartDate,
-      mockEndDate,
-    );
-
-    expect(results).toHaveLength(1);
-    expect(results[0]).toEqual({
-      date: "2024-03-20",
-      campingId: "site1",
-      campingName: "Loop A",
-      siteId: "A1",
-      siteName: "A1",
+  it("should return campsites data", async () => {
+    const results = await adapter.getCampsiteData({
+      campingId,
+      startDate,
+      endDate,
     });
-  });
 
-  it("should find available campsites on specific weekdays", async () => {
-    const results = await adapter.findCamp(
-      mockCampId,
-      [], // Any day
-      [4], // Only Thursdays
-      mockStartDate,
-      mockEndDate,
-    );
-
-    expect(results).toHaveLength(1);
-    expect(results[0]).toEqual({
-      date: "2024-03-21",
-      campingId: "site2",
-      campingName: "Loop A",
-      siteId: "A2",
-      siteName: "A2",
-    });
-  });
-
-  it("should not return already found campsites", async () => {
-    // First call
-    const firstResults = await adapter.findCamp(
-      mockCampId,
-      [],
-      [],
-      mockStartDate,
-      mockEndDate,
-    );
-
-    // Second call should return empty array since all sites were found in first call
-    const results = await adapter.findCamp(
-      mockCampId,
-      [],
-      [],
-      mockStartDate,
-      mockEndDate,
-      getTrackingStateItem(mockCampId, firstResults), // Pass first results as already found sites
-    );
-
-    expect(results).toHaveLength(0);
+    expect(results).toEqual([
+      {
+        campingId: "site1",
+        campingName: "Loop A",
+        date: "2024-03-20",
+        isFree: true,
+        siteId: "A1",
+        siteName: "A1",
+      },
+      {
+        campingId: "site1",
+        campingName: "Loop A",
+        date: "2024-03-21",
+        isFree: false,
+        siteId: "A1",
+        siteName: "A1",
+      },
+      {
+        campingId: "site1",
+        campingName: "Loop A",
+        date: "2024-03-22",
+        isFree: false,
+        siteId: "A1",
+        siteName: "A1",
+      },
+      {
+        campingId: "site2",
+        campingName: "Loop A",
+        date: "2024-03-20",
+        isFree: false,
+        siteId: "A2",
+        siteName: "A2",
+      },
+      {
+        campingId: "site2",
+        campingName: "Loop A",
+        date: "2024-03-21",
+        isFree: true,
+        siteId: "A2",
+        siteName: "A2",
+      },
+      {
+        campingId: "site2",
+        campingName: "Loop A",
+        date: "2024-03-22",
+        isFree: true,
+        siteId: "A2",
+        siteName: "A2",
+      },
+    ]);
   });
 });

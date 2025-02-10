@@ -15,15 +15,13 @@ export async function handleTracker(trackerId: string) {
   tracker.campings.forEach(
     (camping: { id: string; name: string; provider: string }) => {
       const provider = getProviderFromString(camping.provider);
-      findCampsAndNotify(
+
+      findCampsAndNotify({
         provider,
-        camping.id,
-        tracker.days,
-        tracker.weekDays,
-        tracker.startDate,
-        tracker.endDate,
-        tracker.trackingState[camping.id],
-      ).then((results) => {
+        campingId: camping.id,
+        ...tracker,
+        trackingState: tracker.trackingState[camping.id],
+      }).then((results) => {
         // Update tracking state of the current camping id
         const updatedTracker = {
           ...tracker,

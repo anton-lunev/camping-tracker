@@ -3,7 +3,7 @@ import { isNil } from "lodash";
 export const router = {
   resolve: (
     url: string,
-    params?: Record<string, string | number | undefined | null>,
+    params?: Record<string, string | number | boolean | undefined | null>,
     queryParams?: Record<string, string | number | boolean>,
   ) => {
     let resolvedUrl = url;

@@ -10,6 +10,8 @@ import {
 } from "@/server/trackers/messanger";
 import { Logger } from "@/server/utils/logger";
 import { TrackingStateItem } from "@/db/schema";
+import { applyFilters } from "@/server/trackers/common/filters";
+import { BaseError } from "@/server/trackers/common/errors";
 
 // Register adapters
 ProviderAdapterFactory.registerAdapter(
@@ -23,41 +25,69 @@ ProviderAdapterFactory.registerAdapter(
 
 const logger = Logger.for("findCampsAndNotify");
 
-// Main function to find camps
-export const findCampsAndNotify = async (
-  provider: CampProvider,
-  campId: string,
-  days: string[],
-  weekDays: number[],
-  start: string,
-  end: string,
-  trackingState: TrackingStateItem,
-) => {
+export const findCampsAndNotify = async ({
+  provider,
+  campingId,
+  days,
+  weekDays,
+  startDate,
+  endDate,
+  trackingState,
+}: {
+  provider: CampProvider;
+  campingId: string;
+  days: string[];
+  weekDays: number[];
+  startDate: string;
+  endDate: string;
+  trackingState: TrackingStateItem;
+}) => {
+  const params = { campingId, days, weekDays, startDate, endDate };
   try {
     const adapter = ProviderAdapterFactory.getAdapter(provider);
-    const results = await adapter.findCamp(
-      campId,
+    logger.debug("Searching for available spots", params);
+    const results = await adapter.getCampsiteData({
+      campingId,
+      startDate,
+      endDate,
+    });
+
+    const { allSpots, newSpots } = applyFilters(results, {
       days,
       weekDays,
-      start,
-      end,
       trackingState,
+    });
+
+    Logger.info(
+      "[RecreationAdapter]",
+      `available sites: ${allSpots.length}, new sites: ${newSpots.length}`,
     );
 
-    if (results.length) {
-      const notificationData = adapter.getNotificationData(results, campId);
+    if (newSpots.length) {
+      const notificationData = adapter.getNotificationData(newSpots, campingId);
       if (notificationData) {
         try {
           await postToChannel(formatInfoToMessage(notificationData));
         } catch (error) {
           logger.error("Failed to post notification", error);
-          throw error;
         }
       }
     }
 
-    return results;
+    return newSpots;
   } catch (error) {
-    logger.error("Error finding campsites:", error);
+    if (error instanceof BaseError) {
+      logger.error("Provider error occurred", {
+        error: error.message,
+        context: error.context,
+        params,
+      });
+      throw error;
+    }
+
+    logger.error("Unexpected error occurred", {
+      error: error instanceof Error ? error.message : String(error),
+      params,
+    });
   }
 };

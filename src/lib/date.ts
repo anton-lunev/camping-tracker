@@ -100,3 +100,26 @@ function isNextCalendarDay(a: Date, b: Date): boolean {
     b.getDate() === expectedNextDay.getDate()
   );
 }
+
+/**
+ * Returns an array of strings with month period.
+ * @param start - Start date in YYYY-MM-DD format.
+ * @param end - End date in YYYY-MM-DD format.
+ * @returns Array of date strings.
+ */
+export function getMonthsInRange(start: string, end: string): string[] {
+  const dates: string[] = [];
+  const startDate = new Date(`${start}T00:00:00`);
+  const endDate = new Date(`${end}T00:00:00`);
+  const currentDate = new Date(
+    startDate.getFullYear(),
+    startDate.getMonth(),
+    1,
+  );
+
+  while (currentDate <= endDate) {
+    dates.push(currentDate.toISOString().slice(0, 10));
+    currentDate.setMonth(currentDate.getMonth() + 1);
+  }
+  return dates;
+}
