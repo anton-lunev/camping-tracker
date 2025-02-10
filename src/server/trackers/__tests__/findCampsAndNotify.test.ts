@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { CampsiteData } from "@/server/trackers/providers/providerAdapter";
-import { TrackingStateItem } from "@/db/schema";
+import type { CampsiteData } from "@/server/trackers/providers/providerAdapter";
+import type { TrackingStateItem } from "@/db/schema";
 import { postToChannel } from "@/server/trackers/messanger";
 import { findCampsAndNotify, logger } from "../findCampsAndNotify";
 import {

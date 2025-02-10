@@ -1,5 +1,5 @@
-import { CampsiteData } from "@/server/trackers/providers/providerAdapter";
-import { TrackingStateItem } from "@/db/schema";
+import type { CampsiteData } from "@/server/trackers/providers/providerAdapter";
+import type { TrackingStateItem } from "@/db/schema";
 
 export function getTrackingStateItem(
   campingId: string,

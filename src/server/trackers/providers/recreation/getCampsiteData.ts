@@ -1,5 +1,5 @@
-import { CampsitesResponse } from "@/server/trackers/providers/recreation/schema";
-import { CampsiteData } from "@/server/trackers/providers/providerAdapter";
+import type { CampsitesResponse } from "@/server/trackers/providers/recreation/schema";
+import type { CampsiteData } from "@/server/trackers/providers/providerAdapter";
 import { getFormattedDateWithoutTz } from "@/lib/date";
 
 /** Converts response to CampsiteData */

@@ -1,6 +1,6 @@
 "use client";
 
-import { ComponentPropsWithoutRef, ComponentRef, RefObject } from "react";
+import type { ComponentPropsWithoutRef, ComponentRef, RefObject } from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Check } from "lucide-react";
 

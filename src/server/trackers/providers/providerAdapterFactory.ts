@@ -1,4 +1,4 @@
-import { ProviderAdapter } from "./providerAdapter";
+import type { ProviderAdapter } from "./providerAdapter";
 
 export enum CampProvider {
   RECREATION = "recreation",

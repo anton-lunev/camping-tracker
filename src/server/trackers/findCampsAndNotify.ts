@@ -4,12 +4,8 @@ import {
 } from "./providers/providerAdapterFactory";
 import { RecreationAdapter } from "./providers/recreation/adapter";
 import { ReserveCaliforniaAdapter } from "./providers/reserve-california/adapter";
-import {
-  formatInfoToMessage,
-  postToChannel,
-} from "@/server/trackers/messanger";
 import { Logger } from "@/server/utils/logger";
-import { TrackingStateItem } from "@/db/schema";
+import type { TrackingStateItem } from "@/db/schema";
 import { applyFilters } from "@/server/trackers/common/filters";
 import { BaseError } from "@/server/trackers/common/errors";
 
@@ -67,14 +63,14 @@ export const findCampsAndNotify = async ({
       const notificationData = adapter.getNotificationData(newSpots, campingId);
       if (notificationData) {
         try {
-          await postToChannel(formatInfoToMessage(notificationData));
+          // await postToChannel(formatInfoToMessage(notificationData));
         } catch (error) {
           logger.error("Failed to post notification", error);
         }
       }
     }
 
-    return newSpots;
+    return allSpots;
   } catch (error) {
     if (error instanceof BaseError) {
       logger.error("Provider error occurred", {

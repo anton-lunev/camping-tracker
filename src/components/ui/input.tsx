@@ -1,4 +1,4 @@
-import { ComponentProps, RefObject } from "react";
+import type { ComponentProps, RefObject } from "react";
 
 import { cn } from "@/lib/utils";
 

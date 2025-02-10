@@ -1,4 +1,4 @@
-import { CampsiteData, ProviderAdapter } from "../providerAdapter";
+import type { CampsiteData, ProviderAdapter } from "../providerAdapter";
 import { PROVIDER_CONFIG } from "./config";
 import { router } from "@/server/utils/router";
 import { fetchData } from "@/server/trackers/providers/reserve-california/fetch";

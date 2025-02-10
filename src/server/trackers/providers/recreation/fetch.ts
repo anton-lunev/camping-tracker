@@ -1,4 +1,5 @@
-import { CampsitesResponse, campsitesResponseSchema } from "./schema";
+import type { CampsitesResponse } from "./schema";
+import { campsitesResponseSchema } from "./schema";
 import { PROVIDER_CONFIG } from "./config";
 import { router } from "@/server/utils/router";
 import { BaseError, handleZodError, NetworkError } from "@/server/trackers/common/errors";

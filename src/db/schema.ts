@@ -9,6 +9,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { createSelectSchema } from "drizzle-zod";
 
 export type Camping = {
   id: string;
@@ -44,6 +45,7 @@ export const trackers = pgTable("trackers", {
     .notNull(),
 });
 export type Tracker = typeof trackers.$inferSelect;
+export const trackersSchema = createSelectSchema(trackers);
 
 export const settings = pgTable("settings", {
   userId: text("user_id").notNull(),

@@ -6,8 +6,8 @@ import {
   filterFreeSpots,
   keepOnlyNew,
 } from "@/server/trackers/common/filters";
-import { CampsiteData } from "@/server/trackers/providers/providerAdapter";
-import { TrackingStateItem } from "@/db/schema";
+import type { CampsiteData } from "@/server/trackers/providers/providerAdapter";
+import type { TrackingStateItem } from "@/db/schema";
 
 // Sample data as provided
 const sampleData: CampsiteData[] = [

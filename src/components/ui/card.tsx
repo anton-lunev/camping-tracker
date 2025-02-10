@@ -1,4 +1,4 @@
-import { HTMLAttributes, RefObject } from "react";
+import type { HTMLAttributes, RefObject } from "react";
 
 import { cn } from "@/lib/utils";
 

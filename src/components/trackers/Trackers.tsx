@@ -1,27 +1,61 @@
 "use client";
 
-import CampingTrackerCards from "./CampingTrackerCards";
-import TrackerForm from "./TrackerForm";
+import { CampingTrackerCards } from "./CampingTrackerCards";
+import { TrackerForm } from "./TrackerForm";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createTracker, removeTracker, updateTracker } from "./actions";
 import { Button } from "@/components/ui/button";
-import { NewTracker, Tracker } from "@/db/queries/trackers";
+import type { NewTracker } from "@/db/queries/trackers";
+import { sbClient } from "@/db/sbClient";
+import type { Tracker } from "@/db/schema";
+import { trackersSchema } from "@/db/schema";
+import camelcaseKeys from "camelcase-keys";
 
 type TrackersProps = {
   trackers: Tracker[];
 };
 
 export function Trackers({ trackers }: TrackersProps) {
+  const [trackersData, setTrackersData] = useState<Tracker[]>(trackers);
+  useEffect(() => {
+    setTrackersData(trackers);
+  }, [trackers]);
+
+  useEffect(() => {
+    const channel = sbClient()
+      .channel("trackers")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "trackers" },
+        (payload) => {
+          const updatedTracker = trackersSchema.parse(
+            camelcaseKeys(payload.new),
+          ) as Tracker;
+          setTrackersData((prev) => {
+            const newTrackers = [...prev];
+            newTrackers[
+              prev.findIndex((item) => item.id === updatedTracker.id)
+            ] = updatedTracker;
+            return newTrackers;
+          });
+        },
+      )
+      .subscribe();
+    return () => {
+      channel.unsubscribe();
+    };
+  }, []);
+
   const [editingTracker, setEditingTracker] = useState<Tracker | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const handleEdit = (id: string) => {
-    const trackerToEdit = trackers.find((tracker) => tracker.id === id);
+    const trackerToEdit = trackersData.find((tracker) => tracker.id === id);
     if (trackerToEdit) {
       setEditingTracker(trackerToEdit);
     }
@@ -63,7 +97,7 @@ export function Trackers({ trackers }: TrackersProps) {
         </Button>
       </div>
 
-      <CampingTrackerCards trackers={trackers} onEdit={handleEdit} />
+      <CampingTrackerCards trackers={trackersData} onEdit={handleEdit} />
 
       <Dialog
         open={editingTracker !== null || isCreating}

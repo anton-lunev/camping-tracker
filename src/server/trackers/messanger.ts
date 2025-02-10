@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { router } from "@/server/utils/router";
 import { Logger } from "@/server/utils/logger";
-import {
+import type {
   CampsiteData,
   NotificationData,
 } from "@/server/trackers/providers/providerAdapter";

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import type { z } from "zod";
 import { Logger } from "@/server/utils/logger";
 
 const logger = Logger.for("ErrorHandler");

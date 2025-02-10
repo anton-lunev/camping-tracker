@@ -1,27 +1,7 @@
 import { db } from "../";
 import { asc, eq } from "drizzle-orm";
-import { trackers, TrackingState } from "../schema";
-
-export type Camping = {
-  id: string;
-  name: string;
-  provider: string;
-};
-
-export type Tracker = {
-  id: string;
-  updatedAt: string;
-  createdAt: string;
-  campings: Camping[];
-  startDate: string;
-  endDate: string;
-  weekDays: number[];
-  days: string[];
-  active: boolean;
-  interval: number;
-  owner: string;
-  trackingState?: TrackingState;
-};
+import type { Tracker } from "../schema";
+import { trackers } from "../schema";
 
 export type NewTracker = Omit<
   Tracker,
@@ -50,7 +30,12 @@ export function addTrackerDb(tracker: NewTracker) {
 }
 
 export function updateTrackerDb(tracker: Tracker) {
-  return db.update(trackers).set(tracker).where(eq(trackers.id, tracker.id));
+  console.log("updateTrackerDb", tracker);
+  return db
+    .update(trackers)
+    .set(tracker)
+    .where(eq(trackers.id, tracker.id))
+    .execute();
 }
 
 export function removeTrackerDb(trackerId: string) {

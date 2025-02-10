@@ -1,4 +1,5 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import type { ChangeEvent, FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -13,10 +14,11 @@ import { getCampingData } from "./actions";
 import { Badge } from "@/components/ui/badge";
 import { Trash2Icon, X } from "lucide-react";
 import { parseCampingUrl } from "@/components/trackers/utils";
-import { Camping, NewTracker } from "@/db/queries/trackers";
+import type { NewTracker } from "@/db/queries/trackers";
 import { DaysOfWeek } from "@/components/trackers/DaysOfWeek";
 import { DateRanges } from "@/components/trackers/DateRanges";
 import { formatDate, toDate } from "@/lib/date";
+import type { Camping } from "@/db/schema";
 
 interface TrackerFormProps<T extends NewTracker> {
   tracker?: T;
@@ -46,7 +48,7 @@ async function getCampingDataByUrl(campingUrl: string): Promise<Camping> {
   };
 }
 
-export default function TrackerForm<T extends NewTracker>({
+export function TrackerForm<T extends NewTracker>({
   tracker,
   onSave,
   onRemove,

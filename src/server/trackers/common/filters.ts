@@ -1,6 +1,6 @@
-import { CampsiteData } from "@/server/trackers/providers/providerAdapter";
+import type { CampsiteData } from "@/server/trackers/providers/providerAdapter";
 import { getDayOfWeek, getFormattedDateWithoutTz } from "@/lib/date";
-import { TrackingStateItem } from "@/db/schema";
+import type { TrackingStateItem } from "@/db/schema";
 
 export function filterFreeSpots(campData: CampsiteData) {
   return campData.isFree;

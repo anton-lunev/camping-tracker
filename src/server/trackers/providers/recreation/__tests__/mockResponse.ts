@@ -1,4 +1,4 @@
-import { CampsitesResponse } from "../schema";
+import type { CampsitesResponse } from "../schema";
 
 export const mockResponse: CampsitesResponse = {
   campsites: {

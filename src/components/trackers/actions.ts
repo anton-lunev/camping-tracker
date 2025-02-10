@@ -6,17 +6,17 @@ import {
   startTracker,
   stopTracker,
 } from "@/server/scheduler/trackers";
+import type { NewTracker } from "@/db/queries/trackers";
 import {
   addTrackerDb,
   getUserTrackers,
-  NewTracker,
   removeTrackerDb,
-  Tracker,
   updateTrackerDb,
 } from "@/db/queries/trackers";
 import { z } from "zod";
 import { CampProvider } from "@/server/trackers/providers/providerAdapterFactory";
 import { currentUser } from "@clerk/nextjs/server";
+import type { Tracker } from "@/db/schema";
 
 export async function getSubs() {
   const user = await currentUser();

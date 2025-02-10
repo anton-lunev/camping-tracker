@@ -1,8 +1,8 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import type { ComponentProps } from "react";
 import * as React from "react";
-import { ComponentProps } from "react";
 import { type CustomComponents, DayPicker } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
