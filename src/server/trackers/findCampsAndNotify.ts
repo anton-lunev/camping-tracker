@@ -23,7 +23,7 @@ ProviderAdapterFactory.registerAdapter(
   new ReserveCaliforniaAdapter(),
 );
 
-const logger = Logger.for("findCampsAndNotify");
+export const logger = Logger.for("findCampsAndNotify");
 
 export const findCampsAndNotify = async ({
   provider,
@@ -40,7 +40,7 @@ export const findCampsAndNotify = async ({
   weekDays: number[];
   startDate: string;
   endDate: string;
-  trackingState: TrackingStateItem;
+  trackingState?: TrackingStateItem;
 }) => {
   const params = { campingId, days, weekDays, startDate, endDate };
   try {
@@ -82,7 +82,6 @@ export const findCampsAndNotify = async ({
         context: error.context,
         params,
       });
-      throw error;
     }
 
     logger.error("Unexpected error occurred", {

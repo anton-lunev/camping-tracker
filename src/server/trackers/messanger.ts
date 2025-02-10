@@ -57,7 +57,7 @@ export function formatInfoToMessage(
  * @param text - The message text to send.
  * @returns A promise that resolves when the fetch call completes.
  */
-export async function postToChannel(text: string) {
+export async function postToChannel(text: string): Promise<unknown> {
   const url = router.resolve(chatUrl, {}, { chat_id: chatId, text });
   try {
     return await fetch(url, { method: "GET" });
