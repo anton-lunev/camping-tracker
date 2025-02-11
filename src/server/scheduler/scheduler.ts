@@ -1,23 +1,11 @@
 import { SimpleIntervalJob, Task, ToadScheduler } from "toad-scheduler";
 import { Logger } from "@/server/utils/logger";
+import { createGlobal } from "@/server/utils/globalStorage";
 
 const logger = Logger.for("Scheduler");
 
-function getGlobal() {
-  return global as unknown as Global & { scheduler: ToadScheduler };
-}
-
 /** {@see https://github.com/kibertoad/toad-scheduler} */
-function getScheduler() {
-  // There is a bug where this file has multiple instances on server startup.
-  // So use global object to store scheduler instance.
-  if (!getGlobal().scheduler) {
-    getGlobal().scheduler = new ToadScheduler();
-  }
-  return getGlobal().scheduler;
-}
-
-export const scheduler = getScheduler();
+export const scheduler = createGlobal("scheduler", new ToadScheduler());
 
 // Interface for job metadata
 interface JobMeta {

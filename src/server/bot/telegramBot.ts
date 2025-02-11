@@ -2,15 +2,18 @@ import "dotenv/config";
 import { Bot, GrammyError, HttpError } from "grammy";
 import { Logger } from "@/server/utils/logger";
 import { createTokenForUser } from "@/server/bot/token";
+import { createGlobal } from "@/server/utils/globalStorage";
 
 const logger = Logger.for("Telegram bot");
 
-export const bot = new Bot(process.env.TELEGRAM_API_TOKEN!);
+export const bot = createGlobal(
+  "bot",
+  new Bot(process.env.TELEGRAM_API_TOKEN!),
+);
 
 bot.api.setMyCommands([{ command: "link", description: "Link account" }]);
 
 bot.command(["link", "start"], async (ctx) => {
-  console.log(JSON.stringify(ctx, null, 2));
   const userData = ctx.update.message?.from;
   if (userData?.is_bot) {
     return await ctx.reply("Bots can't go camping 🤖🏕");
@@ -40,4 +43,4 @@ bot.catch((botError) => {
 });
 
 bot.start();
-console.log("Starting telegram bot...");
+logger.debug("Starting telegram bot...");
