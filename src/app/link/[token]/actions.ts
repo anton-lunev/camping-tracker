@@ -2,14 +2,8 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { getUserDataByToken } from "@/server/bot/token";
 import { bot } from "@/server/bot/telegramBot";
-import { InputFile } from "grammy";
 
 function sendSuccessMessage(chatId: number) {
-  console.log("sendSuccessMessage", chatId);
-  bot.api.sendAnimation(
-    chatId,
-    new InputFile("https://camping-tracker.vercel.app/camping-animation.mp4"),
-  );
   return bot.api.sendMessage(
     chatId,
     "🎉*Congrats\\! Your account is connected\\.*\nNow you can start tracking campsites 🏕",

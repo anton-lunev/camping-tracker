@@ -12,6 +12,7 @@ if (!apiToken) {
 
 export const bot = createGlobal("bot", () => {
   const bot = new Bot(apiToken);
+  console.log("new Bot");
 
   bot.api.setMyCommands([{ command: "link", description: "Link account" }]);
 
