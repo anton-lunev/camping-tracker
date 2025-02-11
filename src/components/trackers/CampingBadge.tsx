@@ -15,7 +15,7 @@ type CampingBadgeProps = {
 
 export function CampingBadge({ camping, stats }: CampingBadgeProps) {
   const groupedSites = Object.entries(groupBy(stats?.sites, "siteId"));
-  console.log(groupedSites);
+
   return (
     <Popover>
       <PopoverTrigger>

@@ -8,6 +8,10 @@ import { Logger } from "@/server/utils/logger";
 import type { TrackingStateItem } from "@/db/schema";
 import { applyFilters } from "@/server/trackers/common/filters";
 import { BaseError } from "@/server/trackers/common/errors";
+import {
+  formatInfoToMessage,
+  postToChannel,
+} from "@/server/trackers/messanger";
 
 // Register adapters
 ProviderAdapterFactory.registerAdapter(
@@ -63,7 +67,7 @@ export const findCampsAndNotify = async ({
       const notificationData = adapter.getNotificationData(newSpots, campingId);
       if (notificationData) {
         try {
-          // await postToChannel(formatInfoToMessage(notificationData));
+          await postToChannel(formatInfoToMessage(notificationData));
         } catch (error) {
           logger.error("Failed to post notification", error);
         }

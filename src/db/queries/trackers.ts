@@ -30,7 +30,6 @@ export function addTrackerDb(tracker: NewTracker) {
 }
 
 export function updateTrackerDb(tracker: Tracker) {
-  console.log("updateTrackerDb", tracker);
   return db
     .update(trackers)
     .set(tracker)
