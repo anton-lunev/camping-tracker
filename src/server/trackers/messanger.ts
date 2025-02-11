@@ -7,6 +7,7 @@ import type {
 } from "@/server/trackers/providers/providerAdapter";
 import { groupBy } from "lodash";
 import { formatDate, toDate } from "@/lib/date";
+import "../bot/telegramBot";
 
 const apiToken = process.env.TELEGRAM_API_TOKEN!;
 const chatId = process.env.TELEGRAM_CHAT_ID!;

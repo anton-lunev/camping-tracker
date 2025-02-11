@@ -16,6 +16,7 @@ import { sbClient } from "@/db/sbClient";
 import type { Tracker } from "@/db/schema";
 import { trackersSchema } from "@/db/schema";
 import camelcaseKeys from "camelcase-keys";
+import { Portal } from "@/components/Portal";
 
 type TrackersProps = {
   trackers: Tracker[];
@@ -81,21 +82,15 @@ export function Trackers({ trackers }: TrackersProps) {
   };
 
   return (
-    <div className="flex justify-center items-center flex-col gap-4 w-full">
-      <div
-        className="w-full flex justify-center items-center gap-2 bg-contain bg-[url(/header.jpeg)] p-4 aspect-3840/600"
-        style={{
-          maskImage:
-            "linear-gradient(180deg, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%)",
-        }}
-      >
+    <>
+      <Portal targetId="header-slot">
         <h1 className="text-4xl font-extralight drop-shadow-xs">
           Camping Trackers
         </h1>
         <Button size="icon" onClick={() => setIsCreating(true)}>
           +
         </Button>
-      </div>
+      </Portal>
 
       <CampingTrackerCards trackers={trackersData} onEdit={handleEdit} />
 
@@ -117,6 +112,6 @@ export function Trackers({ trackers }: TrackersProps) {
           />
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }
