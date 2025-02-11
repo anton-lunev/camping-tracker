@@ -7,18 +7,7 @@ import type {
 } from "@/server/trackers/providers/providerAdapter";
 import { groupBy } from "lodash";
 import { formatDate, toDate } from "@/lib/date";
-import "../bot/telegramBot";
-
-const apiToken = process.env.TELEGRAM_API_TOKEN!;
-const chatId = process.env.TELEGRAM_CHAT_ID!;
-
-if (!apiToken || !chatId) {
-  throw new Error(
-    "Environment variables TELEGRAM_API_TOKEN and TELEGRAM_CHAT_ID must be set.",
-  );
-}
-
-const chatUrl = `https://api.telegram.org/bot${apiToken}/sendMessage`;
+import { bot } from "@/server/bot/telegramBot";
 
 // Helper function to escape MarkdownV2 reserved characters
 function escapeMarkdownV2(text: string): string {
@@ -69,16 +58,17 @@ export function formatInfoToMessage(
   notificationData: NotificationData,
 ): string {
   const rows: string[] = [
-    `Found ${notificationData.count} new camp sites in`,
-    `[${escapeMarkdownV2(notificationData.campingName)}](${notificationData.campingUrl})`,
+    `*Found ${notificationData.count} free camp sites in* `,
+    `[${escapeMarkdownV2(notificationData.campingName)}](${notificationData.campingUrl})\n`,
   ];
-  const groupedSites = Object.values(
+  const groupedSites = Object.entries(
     groupBy(notificationData.results, "siteName"),
-  );
+  ).toSorted(([a], [b]) => a.localeCompare(b));
   rows.push(
     ...groupedSites.map(
-      (sites) =>
-        `spot: ${formatCampsiteLink(sites[0]!, notificationData.campsiteUrl)}: ${escapeMarkdownV2(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ([_, sites]) =>
+        `• *${formatCampsiteLink(sites[0]!, notificationData.campsiteUrl)}:* ${escapeMarkdownV2(
           sites
             .map((site) => formatDate(toDate(site.date), "MMM-dd"))
             .join(", "),
@@ -89,29 +79,10 @@ export function formatInfoToMessage(
   return getLimitedRows(rows).join("\n");
 }
 
-/**
- * Sends a message to the Telegram channel.
- * @param text - The message text to send.
- * @returns A promise that resolves when the fetch call completes.
- */
-export async function postToChannel(text: string): Promise<unknown> {
+/** Sends a message to the Telegram channel. */
+export async function postToChannel(text: string, chatId: number) {
   try {
-    console.log("text", text);
-    const res = await fetch(chatUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: text,
-        parse_mode: "MarkdownV2",
-      }),
-    });
-    const data = await res.json();
-    if (!data.ok) {
-      console.log("data", data);
-      throw new Error(data.description);
-    }
-    return data;
+    await bot.api.sendMessage(chatId, text, { parse_mode: "MarkdownV2" });
   } catch (error) {
     Logger.error("Messenger", "Failed to post to Telegram channel:", error);
     throw error;

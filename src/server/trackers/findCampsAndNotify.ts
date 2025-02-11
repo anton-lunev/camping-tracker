@@ -33,6 +33,7 @@ export const findCampsAndNotify = async ({
   startDate,
   endDate,
   trackingState,
+  chatId,
 }: {
   provider: CampProvider;
   campingId: string;
@@ -41,6 +42,7 @@ export const findCampsAndNotify = async ({
   startDate: string;
   endDate: string;
   trackingState?: TrackingStateItem;
+  chatId: number;
 }) => {
   const params = { campingId, days, weekDays, startDate, endDate };
   try {
@@ -67,7 +69,7 @@ export const findCampsAndNotify = async ({
       const notificationData = adapter.getNotificationData(newSpots, campingId);
       if (notificationData) {
         try {
-          await postToChannel(formatInfoToMessage(notificationData));
+          await postToChannel(formatInfoToMessage(notificationData), chatId);
         } catch (error) {
           logger.error("Failed to post notification", error);
         }
