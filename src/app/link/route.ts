@@ -39,7 +39,7 @@ async function matchAccounts(token: string) {
         telegramUsername: userData.username,
       },
     });
-    void removeToken(token);
+    await removeToken(token);
     void sendSuccessMessage(userData.id);
   } catch {
     void sendErrorMessage(userData.id);
@@ -57,5 +57,4 @@ export async function GET(request: NextRequest) {
   await matchAccounts(token);
 
   redirect("/");
-  return Response.json("success");
 }

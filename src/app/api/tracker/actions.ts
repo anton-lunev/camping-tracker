@@ -12,6 +12,9 @@ import { handleTracker } from "@/server/trackers/handleTracker";
 export async function updateTracker(data: Tracker) {
   const user = await currentUser();
   if (user?.id) {
+    if (!data.active) {
+      data.trackingState = {};
+    }
     await updateTrackerDb(data);
     if (data.active) {
       void handleTracker(data);
