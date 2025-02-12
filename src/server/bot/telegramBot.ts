@@ -12,14 +12,13 @@ if (!apiToken) {
 
 export const bot = createGlobal("bot", () => {
   const bot = new Bot(apiToken);
-  logger.debug("new Bot");
 
   void bot.api.setMyCommands([
     { command: "link", description: "Link account" },
   ]);
 
   bot.command(["link", "start"], async (ctx) => {
-    logger.debug("command");
+    logger.debug("command", ctx);
     const userData = ctx.update.message?.from;
     if (userData?.is_bot) {
       return await ctx.reply("Bots can't go camping 🤖🏕");

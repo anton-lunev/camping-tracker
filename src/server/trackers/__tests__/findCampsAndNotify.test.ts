@@ -107,6 +107,7 @@ describe("findCampsAndNotify", () => {
       startDate: "2024-03-20",
       endDate: "2024-03-22",
       trackingState,
+      chatId: 1,
     });
 
     expect(mockAdapter.getCampsiteData).toHaveBeenCalledWith({
@@ -115,7 +116,7 @@ describe("findCampsAndNotify", () => {
       endDate: "2024-03-22",
     });
 
-    expect(postToChannel).toHaveBeenCalledWith('formatted-{"some":"data"}');
+    expect(postToChannel).toHaveBeenCalledWith('formatted-{"some":"data"}', 1);
   });
 
   it("should not post notification when no new spots exist", async () => {
@@ -132,6 +133,7 @@ describe("findCampsAndNotify", () => {
       startDate: "2024-03-20",
       endDate: "2024-03-22",
       trackingState,
+      chatId: 1,
     });
 
     expect(postToChannel).not.toHaveBeenCalled();
@@ -152,6 +154,7 @@ describe("findCampsAndNotify", () => {
       startDate: "2024-03-20",
       endDate: "2024-03-22",
       trackingState: undefined,
+      chatId: 1,
     });
 
     expect(logger.error).toHaveBeenCalledWith(
@@ -174,6 +177,7 @@ describe("findCampsAndNotify", () => {
       startDate: "2024-03-20",
       endDate: "2024-03-22",
       trackingState: undefined,
+      chatId: 1,
     });
 
     expect(logger.error).toHaveBeenCalledWith(
@@ -193,6 +197,7 @@ describe("findCampsAndNotify", () => {
       startDate: "2024-03-20",
       endDate: "2024-03-22",
       trackingState: undefined,
+      chatId: 1,
     });
 
     expect(postToChannel).not.toHaveBeenCalled();

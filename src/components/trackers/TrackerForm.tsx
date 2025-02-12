@@ -266,7 +266,8 @@ export function TrackerForm<T extends NewTracker>({
         </div>
       </div>
 
-      <div>
+      {/* TODO: add support of custom intervals */}
+      {/*<div>
         <Label htmlFor="interval">Check Interval (sec)</Label>
         <Input
           id="interval"
@@ -281,7 +282,7 @@ export function TrackerForm<T extends NewTracker>({
             }))
           }
         />
-      </div>
+      </div>*/}
 
       <div>
         <Label htmlFor="active">Status</Label>
