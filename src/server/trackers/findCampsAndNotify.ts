@@ -47,7 +47,7 @@ export const findCampsAndNotify = async ({
   const params = { campingId, days, weekDays, startDate, endDate };
   try {
     const adapter = ProviderAdapterFactory.getAdapter(provider);
-    logger.debug("Searching for available spots", params);
+    logger.info("Searching for available spots", params);
     const results = await adapter.getCampsiteData({
       campingId,
       startDate,

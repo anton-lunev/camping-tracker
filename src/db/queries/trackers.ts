@@ -34,7 +34,7 @@ export function updateTrackerDb(tracker: Tracker) {
     .update(trackers)
     .set(tracker)
     .where(eq(trackers.id, tracker.id))
-    .execute();
+    .returning();
 }
 
 export function removeTrackerDb(trackerId: string) {

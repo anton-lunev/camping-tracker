@@ -8,8 +8,8 @@ import { clerkClient } from "@clerk/nextjs/server";
 import type { Tracker } from "@/db/schema";
 
 export async function handleTracker(tracker: Tracker) {
-  Logger.debug("handleTracker", `Tracker ${tracker.id} logic running...`);
-  
+  Logger.info("handleTracker", `Tracker ${tracker.id} logic running...`);
+
   const client = await clerkClient();
   const user = await client.users.getUser(tracker.owner);
   if (!user) {
@@ -25,17 +25,18 @@ export async function handleTracker(tracker: Tracker) {
     return;
   }
 
-  tracker.campings.forEach(
-    (camping: { id: string; name: string; provider: string }) => {
-      const provider = getProviderFromString(camping.provider);
+  return Promise.all(
+    tracker.campings.map(
+      async (camping: { id: string; name: string; provider: string }) => {
+        const provider = getProviderFromString(camping.provider);
 
-      findCampsAndNotify({
-        provider,
-        campingId: camping.id,
-        ...tracker,
-        trackingState: tracker.trackingState[camping.id],
-        chatId,
-      }).then((results) => {
+        const results = await findCampsAndNotify({
+          provider,
+          campingId: camping.id,
+          ...tracker,
+          trackingState: tracker.trackingState[camping.id],
+          chatId,
+        });
         // Update tracking state of the current camping id
         const updatedTracker = {
           ...tracker,
@@ -44,8 +45,8 @@ export async function handleTracker(tracker: Tracker) {
             [camping.id]: getTrackingStateItem(camping.id, results),
           },
         };
-        updateTrackerDb(updatedTracker);
-      });
-    },
+        await updateTrackerDb(updatedTracker);
+      },
+    ),
   );
 }
