@@ -3,6 +3,7 @@ import { Bot, GrammyError, HttpError } from "grammy";
 import { Logger } from "@/server/utils/logger";
 import { createTokenForUser } from "@/server/bot/token";
 import { createGlobal } from "@/server/utils/globalStorage";
+import { run } from "@grammyjs/runner";
 
 const logger = Logger.for("Telegram bot");
 const apiToken = process.env.TELEGRAM_API_TOKEN!;
@@ -44,8 +45,8 @@ export const bot = createGlobal("bot", () => {
       logger.error(`Unknown error`, e);
     }
   });
-
-  bot.start();
+  console.log("bot.isRunning", bot.isRunning());
+  run(bot);
   logger.debug("Starting telegram bot...");
 
   return bot;

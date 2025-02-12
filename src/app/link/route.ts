@@ -2,6 +2,7 @@ import { bot } from "@/server/bot/telegramBot";
 import type { NextRequest } from "next/server";
 import { getUserDataByToken } from "@/server/bot/token";
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 function sendSuccessMessage(chatId: number) {
   return bot.api.sendMessage(
@@ -50,9 +51,10 @@ async function matchAccounts(token: string) {
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get("token");
   if (!token) {
-    return Response.json({ test: "token not found" });
+    return Response.json("token not found");
   }
   await matchAccounts(token);
 
-  return Response.json({ test: "Hello from Next.js!" });
+  redirect("/");
+  return Response.json("success");
 }
