@@ -1,6 +1,6 @@
 import { runActiveTrackers } from "@/server/trackers/runActiveTrackers";
 
 export async function GET() {
-  void runActiveTrackers();
+  await runActiveTrackers();
   return Response.json("success");
 }
