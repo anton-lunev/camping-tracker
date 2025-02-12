@@ -12,11 +12,14 @@ if (!apiToken) {
 
 export const bot = createGlobal("bot", () => {
   const bot = new Bot(apiToken);
-  console.log("new Bot");
+  logger.debug("new Bot");
 
-  bot.api.setMyCommands([{ command: "link", description: "Link account" }]);
+  void bot.api.setMyCommands([
+    { command: "link", description: "Link account" },
+  ]);
 
   bot.command(["link", "start"], async (ctx) => {
+    logger.debug("command");
     const userData = ctx.update.message?.from;
     if (userData?.is_bot) {
       return await ctx.reply("Bots can't go camping 🤖🏕");
@@ -25,7 +28,7 @@ export const bot = createGlobal("bot", () => {
     if (!id || !username) {
       return await ctx.reply("Cannot retrieve your user data");
     }
-    const token = createTokenForUser({ id, username });
+    const token = await createTokenForUser({ id, username });
     await ctx.reply(
       `Welcome!\nFollow the link to connect your account: \nhttps://camping-tracker.vercel.app/link?token=${token}`,
     );
@@ -44,7 +47,6 @@ export const bot = createGlobal("bot", () => {
       logger.error(`Unknown error`, e);
     }
   });
-  console.log("bot.isRunning", bot.isRunning());
 
   return bot;
 });

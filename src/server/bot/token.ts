@@ -1,31 +1,36 @@
 import { randomBytes } from "crypto";
-import { createGlobal } from "@/server/utils/globalStorage";
+import { getObject, redis, setObject } from "@/db/redisClient";
 
-export const tokensMap = createGlobal(
-  "tokensMap",
-  new Map<string, { id: number; username: string; createdAt: number }>(),
-);
-export const userTokenCache = createGlobal(
-  "userTokenCache",
-  new Map<number, string>(),
-);
+type TelegramUserData = {
+  id: number;
+  username: string;
+};
 
-// TODO: remove by expirationTime
-// TODO: move tokens to DB/redis
-export function createTokenForUser(userData: { id: number; username: string }) {
-  const token = userTokenCache.get(userData.id) || generateToken();
-  tokensMap.set(token, {
+const EXPIRATION_SEC = 5 * 60; // 5 minutes
+
+function key(token: string) {
+  return `tg_link_${token}`;
+}
+
+export async function createTokenForUser(userData: {
+  id: number;
+  username: string;
+}) {
+  const token = generateToken();
+  await setObject<TelegramUserData>(key(token), {
     id: userData.id,
     username: userData.username,
-    createdAt: Date.now(),
   });
-  console.log("createTokenForUser", tokensMap);
+  await redis.expire(key(token), EXPIRATION_SEC);
   return token;
 }
 
 export function getUserDataByToken(token: string) {
-  console.log("getUserDataByToken", tokensMap);
-  return tokensMap.get(token);
+  return getObject<TelegramUserData>(key(token));
+}
+
+export function removeToken(token: string) {
+  return redis.del(key(token));
 }
 
 export function generateToken(length = 32): string {

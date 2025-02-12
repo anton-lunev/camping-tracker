@@ -1,6 +1,6 @@
 import { bot } from "@/server/bot/telegramBot";
 import type { NextRequest } from "next/server";
-import { getUserDataByToken } from "@/server/bot/token";
+import { getUserDataByToken, removeToken } from "@/server/bot/token";
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
@@ -21,13 +21,13 @@ function sendErrorMessage(chatId: number) {
 }
 
 async function matchAccounts(token: string) {
-  const userData = getUserDataByToken(token);
+  const userData = await getUserDataByToken(token);
   console.log("userData", userData);
   if (!userData) return { success: false };
 
   const user = await currentUser();
   if (!user) {
-    sendErrorMessage(userData.id);
+    void sendErrorMessage(userData.id);
     return { success: false };
   }
 
@@ -39,9 +39,10 @@ async function matchAccounts(token: string) {
         telegramUsername: userData.username,
       },
     });
-    sendSuccessMessage(userData.id);
+    void removeToken(token);
+    void sendSuccessMessage(userData.id);
   } catch {
-    sendErrorMessage(userData.id);
+    void sendErrorMessage(userData.id);
     console.error("failed to update user metadata");
     return { success: false };
   }
