@@ -1,7 +1,7 @@
-"use server";
-import { clerkClient, currentUser } from "@clerk/nextjs/server";
-import { getUserDataByToken } from "@/server/bot/token";
 import { bot } from "@/server/bot/telegramBot";
+import type { NextRequest } from "next/server";
+import { getUserDataByToken } from "@/server/bot/token";
+import { clerkClient, currentUser } from "@clerk/nextjs/server";
 
 function sendSuccessMessage(chatId: number) {
   return bot.api.sendMessage(
@@ -19,7 +19,7 @@ function sendErrorMessage(chatId: number) {
   );
 }
 
-export async function matchAccounts(token: string) {
+async function matchAccounts(token: string) {
   const userData = getUserDataByToken(token);
   console.log("userData", userData);
   if (!userData) return { success: false };
@@ -45,4 +45,14 @@ export async function matchAccounts(token: string) {
     return { success: false };
   }
   return { success: true };
+}
+
+export async function GET(request: NextRequest) {
+  const token = request.nextUrl.searchParams.get("token");
+  if (!token) {
+    return Response.json({ test: "token not found" });
+  }
+  await matchAccounts(token);
+
+  return Response.json({ test: "Hello from Next.js!" });
 }

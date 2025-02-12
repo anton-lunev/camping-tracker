@@ -9,7 +9,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
-import { createTracker, removeTracker, updateTracker } from "./actions";
 import { Button } from "@/components/ui/button";
 import type { NewTracker } from "@/db/queries/trackers";
 import { sbClient } from "@/db/sbClient";
@@ -62,17 +61,26 @@ export function Trackers({ trackers }: TrackersProps) {
     }
   };
 
-  const handleSave = (updatedTracker: Tracker) => {
-    updateTracker(updatedTracker);
+  const handleSave = async (updatedTracker: Tracker) => {
+    await fetch("/api/tracker", {
+      method: "PUT",
+      body: JSON.stringify(updatedTracker),
+    });
     setEditingTracker(null);
     handleCancel();
   };
-  const handleCreate = (newTracker: NewTracker) => {
-    createTracker(newTracker);
+  const handleCreate = async (newTracker: NewTracker) => {
+    await fetch("/api/tracker", {
+      method: "POST",
+      body: JSON.stringify(newTracker),
+    });
     handleCancel();
   };
-  const handleRemove = (tracker: Tracker) => {
-    removeTracker(tracker.id);
+  const handleRemove = async (tracker: Tracker) => {
+    await fetch("/api/tracker", {
+      method: "DELETE",
+      body: JSON.stringify({ id: tracker.id }),
+    });
     handleCancel();
   };
 

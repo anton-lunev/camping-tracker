@@ -27,7 +27,7 @@ export const bot = createGlobal("bot", () => {
     }
     const token = createTokenForUser({ id, username });
     await ctx.reply(
-      `Welcome!\nFollow the link to connect your account: \nhttps://camping-tracker.vercel.app/link/${token}`,
+      `Welcome!\nFollow the link to connect your account: \nhttps://camping-tracker.vercel.app/link?token=${token}`,
     );
   });
 
