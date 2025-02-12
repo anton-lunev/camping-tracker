@@ -12,12 +12,10 @@ import { handleTracker } from "@/server/trackers/handleTracker";
 export async function updateTracker(data: Tracker) {
   const user = await currentUser();
   if (user?.id) {
-    if (!data.active) {
-      data.trackingState = {};
-    }
+    if (!data.active) data.trackingState = {};
     await updateTrackerDb(data);
     if (data.active) {
-      void handleTracker(data);
+      await handleTracker(data);
     }
     revalidatePath("/");
   }
@@ -29,9 +27,9 @@ export async function createTracker(newTracker: Omit<NewTracker, "owner">) {
     const data = await addTrackerDb({ ...newTracker, owner: user.id });
     const [tracker] = data;
     if (tracker.active) {
-      void handleTracker(tracker);
-      revalidatePath("/");
+      await handleTracker(tracker);
     }
+    revalidatePath("/");
   }
 }
 
