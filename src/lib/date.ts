@@ -124,3 +124,44 @@ export function getMonthsInRange(start: string, end: string): string[] {
   }
   return dates;
 }
+
+/**
+ * Returns an array of date pairs [startDate, endDate] for each month in the range.
+ * @param start - Start date in YYYY-MM-DD format.
+ * @param end - End date in YYYY-MM-DD format.
+ * @returns Array of date pairs, each pair is [startDate, endDate] in YYYY-MM-DD format.
+ */
+export function getMonthDatePairs(
+  start: string,
+  end: string,
+): [string, string][] {
+  const datePairs: [string, string][] = [];
+  const startDate = new Date(`${start}T00:00:00`);
+  const endDate = new Date(`${end}T00:00:00`);
+  const currentDate = new Date(
+    startDate.getFullYear(),
+    startDate.getMonth(),
+    1,
+  );
+
+  while (currentDate <= endDate) {
+    const monthStartDate = currentDate.toISOString().slice(0, 10);
+
+    // Get the last day of the current month
+    const nextMonth = new Date(currentDate);
+    nextMonth.setMonth(currentDate.getMonth() + 1);
+    nextMonth.setDate(0); // Set date to 0 to go to the last day of the current month
+
+    let monthEndDate = nextMonth.toISOString().slice(0, 10);
+
+    // If the calculated monthEndDate is after the overall endDate, use the overall endDate
+    if (new Date(monthEndDate) > endDate) {
+      monthEndDate = end;
+    }
+
+    datePairs.push([monthStartDate, monthEndDate]);
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    currentDate.setDate(1); // Reset date to 1st of the next month for the next iteration (important for accurate month iteration)
+  }
+  return datePairs;
+}

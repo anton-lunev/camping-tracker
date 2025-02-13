@@ -3,6 +3,7 @@ import { searchResponseSchema } from "@/server/trackers/providers/reserve-califo
 import { PROVIDER_CONFIG } from "./config";
 import { BaseError, handleZodError, NetworkError } from "@/server/trackers/common/errors";
 import { z } from "zod";
+import { getMonthDatePairs } from "@/lib/date";
 
 /** Fetch campings for given date range */
 export async function fetchData({
@@ -13,52 +14,64 @@ export async function fetchData({
   campingId: string;
   startDate: string;
   endDate: string;
-}): Promise<SearchResponse> {
+}): Promise<SearchResponse[]> {
   const url = PROVIDER_CONFIG.API_URL;
-  const payload = {
-    IsADA: false,
-    MinVehicleLength: 0,
-    UnitCategoryId: 1,
-    StartDate: startDate,
-    WebOnly: true,
-    UnitTypesGroupIds: [] as number[],
-    SleepingUnitId: 83,
-    EndDate: endDate,
-    UnitSort: "orderby",
-    InSeasonOnly: true,
-    FacilityId: campingId,
-    RestrictADA: false,
-  };
+  const fetchPromises = getMonthDatePairs(startDate, endDate).map(
+    async ([StartDate, EndDate]) => {
+      const payload = {
+        IsADA: false,
+        MinVehicleLength: 0,
+        UnitCategoryId: 1,
+        StartDate,
+        WebOnly: true,
+        UnitTypesGroupIds: [] as number[],
+        SleepingUnitId: 83,
+        EndDate,
+        UnitSort: "orderby",
+        InSeasonOnly: true,
+        FacilityId: campingId,
+        RestrictADA: false,
+      };
 
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+      console.log("payload", payload);
 
-    if (!response.ok) {
-      throw new NetworkError(
-        `HTTP error! status: ${response.status} ${response.statusText}`,
-      );
-    }
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
 
-    const rawData = await response.json();
+        if (!response.ok) {
+          throw new NetworkError(
+            `HTTP error! status: ${response.status} ${response.statusText}`,
+          );
+        }
 
-    try {
-      return searchResponseSchema.parse(rawData);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw handleZodError(error, { campingId, startDate, endDate });
+        const rawData = await response.json();
+        // exportResponse(
+        //   rawData,
+        //   `${CampProvider.RESERVE_CALIFORNIA}_${campingId}_${StartDate}_${EndDate}`,
+        // );
+
+        try {
+          return searchResponseSchema.parse(rawData);
+        } catch (error) {
+          if (error instanceof z.ZodError) {
+            throw handleZodError(error, { campingId, StartDate, EndDate });
+          }
+          throw error;
+        }
+      } catch (error) {
+        if (error instanceof BaseError) throw error;
+        throw new BaseError("An unexpected error occurred", error as Error, {
+          campingId,
+          StartDate,
+          EndDate,
+        });
       }
-      throw error;
-    }
-  } catch (error) {
-    if (error instanceof BaseError) throw error;
-    throw new BaseError("An unexpected error occurred", error as Error, {
-      campingId,
-      startDate,
-      endDate,
-    });
-  }
+    },
+  );
+
+  return Promise.all(fetchPromises);
 }

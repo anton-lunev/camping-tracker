@@ -2,9 +2,15 @@ import type { CampsitesResponse } from "./schema";
 import { campsitesResponseSchema } from "./schema";
 import { PROVIDER_CONFIG } from "./config";
 import { router } from "@/server/utils/router";
-import { BaseError, handleZodError, NetworkError } from "@/server/trackers/common/errors";
+import {
+  BaseError,
+  handleZodError,
+  NetworkError,
+} from "@/server/trackers/common/errors";
 import { z } from "zod";
 import { getMonthsInRange } from "@/lib/date";
+
+// import { exportResponse } from "@/server/utils/exportResponse";
 
 /** Fetch campsites for given data range */
 export async function fetchData({
@@ -32,7 +38,7 @@ export async function fetchData({
           );
         }
         const data = await response.json();
-
+        // exportResponse(data, date);
         try {
           return campsitesResponseSchema.parse(data);
         } catch (error) {

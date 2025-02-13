@@ -44,10 +44,10 @@ export const findCampsAndNotify = async ({
   trackingState?: TrackingStateItem;
   chatId: number;
 }) => {
-  const params = { campingId, days, weekDays, startDate, endDate };
+  const params = { campingId, days, weekDays, startDate, endDate, provider };
   try {
     const adapter = ProviderAdapterFactory.getAdapter(provider);
-    logger.info("Searching for available spots", params);
+    logger.info(`Searching for available spots`, params);
     const results = await adapter.getCampsiteData({
       campingId,
       startDate,
@@ -60,9 +60,9 @@ export const findCampsAndNotify = async ({
       trackingState,
     });
 
-    Logger.info(
-      "[RecreationAdapter]",
+    logger.info(
       `available sites: ${allSpots.length}, new sites: ${newSpots.length}`,
+      params,
     );
 
     if (newSpots.length) {

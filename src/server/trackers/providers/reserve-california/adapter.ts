@@ -12,12 +12,12 @@ export class ReserveCaliforniaAdapter implements ProviderAdapter {
     endDate: string;
   }) {
     const { campingId } = parseId(params.campingId);
-    const response = await fetchData({
+    const responses = await fetchData({
       campingId,
       startDate: params.startDate,
       endDate: params.endDate,
     });
-    return getCampsiteData(response);
+    return responses.flatMap((res) => getCampsiteData(res));
   }
 
   getNotificationData(results: CampsiteData[], id: string) {
