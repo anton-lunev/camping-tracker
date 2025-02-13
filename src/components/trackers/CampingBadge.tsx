@@ -6,7 +6,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import type { Camping, TrackingStateItem } from "@/db/schema";
 import { groupBy } from "lodash";
-import { DateRanges } from "@/components/trackers/DateRanges";
+import { DateBadge } from "@/components/trackers/DateBadge";
 
 type CampingBadgeProps = {
   camping: Camping;
@@ -18,15 +18,12 @@ export function CampingBadge({ camping, stats }: CampingBadgeProps) {
 
   return (
     <Popover>
-      <PopoverTrigger>
+      <PopoverTrigger className="max-w-full">
         <Badge key={camping.id} variant="secondary" className="flex gap-2">
-          <span>{camping.name}</span>
+          <span className="block truncate">{camping.name}</span>
 
           {stats?.sites ? (
-            <Badge
-              variant="default"
-              className="px-1 -mr-2 bg-emerald-600 hover:bg-emerald-700"
-            >
+            <Badge variant="green" className="px-1 -mr-2">
               {stats.sites.length}
             </Badge>
           ) : null}
@@ -38,18 +35,24 @@ export function CampingBadge({ camping, stats }: CampingBadgeProps) {
             Free Sites
           </h3>
           <div className="p-4">
-            {groupedSites.map(([siteId, sites]) => {
-              const siteDates = sites.map((site) => site.date);
+            {groupedSites.length ? (
+              groupedSites.map(([siteId, sites]) => {
+                const siteDates = sites.map((site) => site.date);
 
-              return (
-                <div key={siteId} className="mb-4">
-                  <h4 className="text-sm font-bold">Site {siteId}:</h4>
-                  <div className="text-sm text-muted-foreground flex flex-wrap gap-1">
-                    <DateRanges dates={siteDates} variant="outline" />
+                return (
+                  <div key={siteId} className="mb-4">
+                    <h4 className="text-sm font-bold">Site {siteId}:</h4>
+                    <div className="text-sm text-muted-foreground flex flex-wrap gap-1">
+                      {siteDates.map((date) => (
+                        <DateBadge key={date} date={date} variant="outline" />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            ) : (
+              <span>No Free site found</span>
+            )}
           </div>
         </div>
       </PopoverContent>

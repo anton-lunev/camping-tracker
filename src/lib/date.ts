@@ -1,7 +1,8 @@
 import { format } from "date-fns/format";
 
 export const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-export const DATE_FORMAT = "yyyy-MM-dd";
+export const DATE_FORMAT_FULL = "yyyy-MM-dd";
+export const DATE_FORMAT_SHORT = "MMM-dd EEE";
 const RANGE_FORMAT = new Intl.DateTimeFormat("en", {
   year: "numeric",
   month: "short",
@@ -56,7 +57,7 @@ export function formatRange(dates: Date[]) {
   return RANGE_FORMAT.formatRange(dates[0], dates[dates.length - 1]);
 }
 
-export function formatDate(date: Date, formatStr = DATE_FORMAT) {
+export function formatDate(date: Date, formatStr = DATE_FORMAT_FULL) {
   return format(date, formatStr);
 }
 

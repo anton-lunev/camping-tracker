@@ -6,7 +6,7 @@ import type {
   NotificationData,
 } from "@/server/trackers/providers/providerAdapter";
 import { groupBy } from "lodash";
-import { formatDate, toDate } from "@/lib/date";
+import { DATE_FORMAT_SHORT, formatDate, toDate } from "@/lib/date";
 import { bot } from "@/server/bot/telegramBot";
 
 // Helper function to escape MarkdownV2 reserved characters
@@ -70,7 +70,7 @@ export function formatInfoToMessage(
       ([_, sites]) =>
         `• *${formatCampsiteLink(sites[0]!, notificationData.campsiteUrl)}:* ${escapeMarkdownV2(
           sites
-            .map((site) => formatDate(toDate(site.date), "MMM-dd"))
+            .map((site) => formatDate(toDate(site.date), DATE_FORMAT_SHORT))
             .join(", "),
         )}`,
     ),

@@ -14,9 +14,14 @@ function getStats(tracker: Tracker, campingId: string) {
 interface CampingTrackerCardProps {
   tracker: Tracker;
   onEdit: (id: string) => void;
+  toggleActive: (tracker: Tracker) => void;
 }
 
-function CampingTrackerCard({ tracker, onEdit }: CampingTrackerCardProps) {
+function CampingTrackerCard({
+  tracker,
+  onEdit,
+  toggleActive,
+}: CampingTrackerCardProps) {
   return (
     <Card
       key={tracker.id}
@@ -24,9 +29,15 @@ function CampingTrackerCard({ tracker, onEdit }: CampingTrackerCardProps) {
     >
       <CardHeader>
         <div className="flex items-center justify-center">
-          <Badge variant={tracker.active ? "default" : "secondary"}>
-            {tracker.active ? "Active" : "Inactive"}
-          </Badge>
+          <Button
+            className="cursor-pointer"
+            variant="unstyled"
+            onClick={() => toggleActive(tracker)}
+          >
+            <Badge variant={tracker.active ? "green" : "secondary"}>
+              {tracker.active ? "Active" : "Inactive"}
+            </Badge>
+          </Button>
 
           <div className="ml-auto flex gap-1">
             <Button
@@ -86,11 +97,13 @@ function CampingTrackerCard({ tracker, onEdit }: CampingTrackerCardProps) {
 interface CampingTrackerCardsProps {
   trackers: Tracker[];
   onEdit: (id: string) => void;
+  toggleActive: (tracker: Tracker) => void;
 }
 
 export function CampingTrackerCards({
   trackers,
   onEdit,
+  toggleActive,
 }: CampingTrackerCardsProps) {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -99,6 +112,7 @@ export function CampingTrackerCards({
           key={tracker.id}
           tracker={tracker}
           onEdit={onEdit}
+          toggleActive={toggleActive}
         />
       ))}
     </div>

@@ -32,17 +32,33 @@ export function Trackers({ trackers }: TrackersProps) {
       .channel("trackers")
       .on(
         "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "trackers" },
+        { event: "*", schema: "public", table: "trackers" },
         (payload) => {
-          const updatedTracker = trackersSchema.parse(
-            camelcaseKeys(payload.new),
-          ) as Tracker;
+          console.log("event", payload);
           setTrackersData((prev) => {
-            const newTrackers = [...prev];
-            newTrackers[
-              prev.findIndex((item) => item.id === updatedTracker.id)
-            ] = updatedTracker;
-            return newTrackers;
+            if (payload.eventType === "INSERT") {
+              const newTracker = trackersSchema.parse(
+                camelcaseKeys(payload.new),
+              ) as Tracker;
+              return [...prev, newTracker];
+            }
+            if (payload.eventType === "DELETE") {
+              return prev.filter((item) => item.id !== payload.old.id);
+            }
+            if (payload.eventType === "UPDATE") {
+              const updatedTracker = trackersSchema.parse(
+                camelcaseKeys(payload.new),
+              ) as Tracker;
+              const newTrackers = [...prev];
+              const index = prev.findIndex(
+                (item) => item.id === updatedTracker.id,
+              );
+              if (index !== -1) {
+                newTrackers[index] = updatedTracker;
+              }
+              return newTrackers;
+            }
+            return prev;
           });
         },
       )
@@ -89,6 +105,10 @@ export function Trackers({ trackers }: TrackersProps) {
     setIsCreating(false);
   };
 
+  const toggleActive = (tracker: Tracker) => {
+    handleSave({ ...tracker, active: !tracker.active });
+  };
+
   return (
     <>
       <Portal targetId="header-slot">
@@ -100,7 +120,11 @@ export function Trackers({ trackers }: TrackersProps) {
         </Button>
       </Portal>
 
-      <CampingTrackerCards trackers={trackersData} onEdit={handleEdit} />
+      <CampingTrackerCards
+        trackers={trackersData}
+        onEdit={handleEdit}
+        toggleActive={toggleActive}
+      />
 
       <Dialog
         open={editingTracker !== null || isCreating}
