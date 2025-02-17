@@ -1,17 +1,24 @@
 import type { BadgeProps } from "@/components/ui/badge";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
-import { formatRange, groupConsecutiveDates } from "@/lib/date";
+import { formatRange, groupConsecutiveDates, toDate } from "@/lib/date";
 
 type DateRangesProps = {
   dates: string[];
   onRemove?: (dates: Date[]) => void;
   variant?: BadgeProps["variant"];
+  fullRange?: boolean;
 };
 
-export function DateRanges({ dates, onRemove, variant }: DateRangesProps) {
+export function DateRanges({
+  dates,
+  onRemove,
+  variant,
+  fullRange = false,
+}: DateRangesProps) {
   if (!dates.length) return null;
-  return groupConsecutiveDates(dates)?.map((dates) => {
+  const groups = fullRange ? [dates.map(toDate)] : groupConsecutiveDates(dates);
+  return groups?.map((dates) => {
     const formattedRange = formatRange(dates);
     return (
       <Badge

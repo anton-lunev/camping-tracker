@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import type { Camping, TrackingStateItem } from "@/db/schema";
 import { groupBy } from "lodash";
 import { DateBadge } from "@/components/trackers/DateBadge";
+import Image from "next/image";
 
 type CampingBadgeProps = {
   camping: Camping;
@@ -19,11 +20,26 @@ export function CampingBadge({ camping, stats }: CampingBadgeProps) {
   return (
     <Popover>
       <PopoverTrigger className="max-w-full">
-        <Badge key={camping.id} variant="secondary" className="flex gap-2">
-          <span className="block truncate">{camping.name}</span>
+        <Badge key={camping.id} variant="secondary" className="flex gap-2 p-1">
+          <Image
+            src={
+              camping.provider === "recreation"
+                ? "/recreation.png"
+                : "/reservecalifornia.png"
+            }
+            width={16}
+            height={16}
+            alt={
+              camping.provider === "recreation"
+                ? "Recreation.gov"
+                : "Reserve California"
+            }
+          />
+
+          <span className="block truncate mr-1">{camping.name}</span>
 
           {stats?.sites ? (
-            <Badge variant="green" className="px-1 -mr-2">
+            <Badge variant="green" className="px-1 py-0 -ml-1">
               {stats.sites.length}
             </Badge>
           ) : null}

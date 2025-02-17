@@ -69,7 +69,10 @@ function CampingTrackerCard({
           <div>
             <span className="font-semibold mb-2">Tracking Period:</span>
             <div className="flex gap-2">
-              <DateRanges dates={[tracker.startDate, tracker.endDate]} />
+              <DateRanges
+                dates={[tracker.startDate, tracker.endDate]}
+                fullRange
+              />
             </div>
           </div>
 
