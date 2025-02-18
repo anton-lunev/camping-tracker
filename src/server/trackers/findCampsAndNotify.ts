@@ -1,9 +1,4 @@
-import {
-  CampProvider,
-  ProviderAdapterFactory,
-} from "./providers/providerAdapterFactory";
-import { RecreationAdapter } from "./providers/recreation/adapter";
-import { ReserveCaliforniaAdapter } from "./providers/reserve-california/adapter";
+import type { CampProvider } from "./providers/providerAdapterFactory";
 import { Logger } from "@/server/utils/logger";
 import type { TrackingStateItem } from "@/db/schema";
 import { applyFilters } from "@/server/trackers/common/filters";
@@ -12,16 +7,7 @@ import {
   formatInfoToMessage,
   postToChannel,
 } from "@/server/trackers/messanger";
-
-// Register adapters
-ProviderAdapterFactory.registerAdapter(
-  CampProvider.RECREATION,
-  new RecreationAdapter(),
-);
-ProviderAdapterFactory.registerAdapter(
-  CampProvider.RESERVE_CALIFORNIA,
-  new ReserveCaliforniaAdapter(),
-);
+import { getProviderAdapter } from "./providers";
 
 export const logger = Logger.for("findCampsAndNotify");
 
@@ -46,7 +32,7 @@ export const findCampsAndNotify = async ({
 }) => {
   const params = { campingId, days, weekDays, startDate, endDate, provider };
   try {
-    const adapter = ProviderAdapterFactory.getAdapter(provider);
+    const adapter = getProviderAdapter(provider);
     logger.info(`Searching for available spots`, params);
     const results = await adapter.getCampsiteData({
       campingId,

@@ -1,11 +1,11 @@
 import { Trackers } from "@/components/trackers/Trackers";
-import { getSubs } from "@/components/trackers/actions";
+import { getTrackers } from "@/components/trackers/actions";
 import { SignedIn, UserButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import { ConnectTelegram } from "@/app/ConnectTelegram";
 
 export default async function Home() {
-  const trackers = await getSubs();
+  const trackers = await getTrackers();
   const user = await currentUser();
   const isTelegramConnected = !!user?.privateMetadata.telegramId;
 

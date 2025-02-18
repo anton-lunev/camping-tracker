@@ -124,3 +124,7 @@ export const searchResponseSchema = z.object({
 });
 
 export type SearchResponse = z.infer<typeof searchResponseSchema>;
+
+export const campgroundSchema = z.object({
+  Name: z.string(),
+});

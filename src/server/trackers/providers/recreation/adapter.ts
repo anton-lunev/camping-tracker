@@ -3,6 +3,7 @@ import { PROVIDER_CONFIG } from "./config";
 import { router } from "@/server/utils/router";
 import { fetchData } from "@/server/trackers/providers/recreation/fetch";
 import { getCampsiteData } from "@/server/trackers/providers/recreation/getCampsiteData";
+import { fetchCampingInfo } from "@/server/trackers/providers/reserve-california/fetch";
 
 export class RecreationAdapter implements ProviderAdapter {
   async getCampsiteData(params: {
@@ -12,6 +13,10 @@ export class RecreationAdapter implements ProviderAdapter {
   }) {
     const responses = await fetchData(params);
     return responses.flatMap((res) => getCampsiteData(res));
+  }
+
+  getCampingInfo(campingId: string) {
+    return fetchCampingInfo(campingId);
   }
 
   getNotificationData(results: CampsiteData[], campingId: string) {

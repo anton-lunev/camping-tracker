@@ -28,3 +28,9 @@ export const campsitesResponseSchema = z.object({
 });
 
 export type CampsitesResponse = z.infer<typeof campsitesResponseSchema>;
+
+export const campgroundSchema = z.object({
+  campground: z.object({
+    facility_name: z.string(),
+  }),
+});

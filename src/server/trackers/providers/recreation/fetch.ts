@@ -1,5 +1,9 @@
-import type { CampsitesResponse } from "./schema";
-import { campsitesResponseSchema } from "./schema";
+import type {
+  CampsitesResponse} from "./schema";
+import {
+  campgroundSchema,
+  campsitesResponseSchema,
+} from "./schema";
 import { PROVIDER_CONFIG } from "./config";
 import { router } from "@/server/utils/router";
 import {
@@ -9,6 +13,7 @@ import {
 } from "@/server/trackers/common/errors";
 import { z } from "zod";
 import { getMonthsInRange } from "@/lib/date";
+import type { CampingInfo } from "@/server/trackers/providers/providerAdapter";
 
 // import { exportResponse } from "@/server/utils/exportResponse";
 
@@ -59,4 +64,21 @@ export async function fetchData({
   );
 
   return Promise.all(fetchPromises);
+}
+
+export async function fetchCampingInfo(
+  campingId: string,
+): Promise<CampingInfo> {
+  const response = await fetch(
+    router.resolve(PROVIDER_CONFIG.CAMPGROUND_API_URL, { campingId }),
+    { headers: { "Content-Type": "application/json" } },
+  );
+  if (!response.ok || response.status !== 200) {
+    throw new Error("Failed to fetch camping info from reservecalifornia");
+  }
+
+  const rawData = await response.json();
+
+  const data = campgroundSchema.parse(rawData);
+  return { name: data.campground.facility_name };
 }

@@ -7,13 +7,17 @@ export type CampsiteData = {
   isFree: boolean;
 };
 
-export interface NotificationData {
+export type NotificationData = {
   results: CampsiteData[];
   campingName: string;
   campingUrl: string;
   campsiteUrl?: string;
   count: number;
-}
+};
+
+export type CampingInfo = {
+  name: string;
+};
 
 export interface ProviderAdapter {
   getCampsiteData(params: {
@@ -21,6 +25,8 @@ export interface ProviderAdapter {
     startDate: string;
     endDate: string;
   }): Promise<CampsiteData[]>;
+
+  getCampingInfo(campingId: string): Promise<CampingInfo>;
 
   getNotificationData(
     results: CampsiteData[],

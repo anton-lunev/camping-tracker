@@ -1,7 +1,10 @@
 import type { CampsiteData, ProviderAdapter } from "../providerAdapter";
 import { PROVIDER_CONFIG } from "./config";
 import { router } from "@/server/utils/router";
-import { fetchData } from "@/server/trackers/providers/reserve-california/fetch";
+import {
+  fetchCampingInfo,
+  fetchData,
+} from "@/server/trackers/providers/reserve-california/fetch";
 import { getCampsiteData } from "./getCampsiteData";
 import { parseId } from "@/server/trackers/providers/reserve-california/parseId";
 
@@ -18,6 +21,10 @@ export class ReserveCaliforniaAdapter implements ProviderAdapter {
       endDate: params.endDate,
     });
     return responses.flatMap((res) => getCampsiteData(res));
+  }
+
+  getCampingInfo(campingId: string) {
+    return fetchCampingInfo(campingId);
   }
 
   getNotificationData(results: CampsiteData[], id: string) {
