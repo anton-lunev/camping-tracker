@@ -1,9 +1,17 @@
 "use server";
 
-import { getUserTrackers } from "@/db/queries/trackers";
+import {
+  addTrackerDb,
+  getUserTrackers,
+  type NewTracker,
+  removeTrackerDb,
+  updateTrackerDb,
+} from "@/db/queries/trackers";
 import { z } from "zod";
 import { CampProvider } from "@/server/trackers/providers/providerAdapterFactory";
 import { currentUser } from "@clerk/nextjs/server";
+import type { Tracker } from "@/db/schema";
+import { handleTracker } from "@/server/trackers/handleTracker";
 
 export async function getSubs() {
   const user = await currentUser();
@@ -64,4 +72,36 @@ export async function getCampingData(provider: string, id: string) {
     throw new Error(`Unsupported provider: ${provider}`);
   }
   return await fetcher(id);
+}
+
+export async function updateTracker(data: Tracker) {
+  const user = await currentUser();
+  if (user?.id) {
+    data.trackingState = {};
+    const [updatedTracker] = await updateTrackerDb(data);
+    if (updatedTracker.active) {
+      await handleTracker(updatedTracker);
+    }
+    // revalidatePath("/");
+  }
+}
+
+export async function createTracker(newTracker: Omit<NewTracker, "owner">) {
+  const user = await currentUser();
+  if (user?.id) {
+    const data = await addTrackerDb({ ...newTracker, owner: user.id });
+    const [tracker] = data;
+    if (tracker.active) {
+      await handleTracker(tracker);
+    }
+    // revalidatePath("/");
+  }
+}
+
+export async function removeTracker(trackerId: string) {
+  const user = await currentUser();
+  if (user?.id) {
+    await removeTrackerDb(trackerId);
+    // revalidatePath("/");
+  }
 }

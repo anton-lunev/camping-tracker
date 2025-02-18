@@ -11,14 +11,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { getCampingData } from "./actions";
-import { Badge } from "@/components/ui/badge";
-import { Trash2Icon, X } from "lucide-react";
+import { Trash2Icon } from "lucide-react";
 import { parseCampingUrl } from "@/components/trackers/utils";
 import type { NewTracker } from "@/db/queries/trackers";
 import { DaysOfWeek } from "@/components/trackers/DaysOfWeek";
 import { DateRanges } from "@/components/trackers/DateRanges";
 import { formatDate, toDate } from "@/lib/date";
 import type { Camping } from "@/db/schema";
+import { CampingBadge } from "@/components/trackers/CampingBadge";
 
 interface TrackerFormProps<T extends NewTracker> {
   tracker?: T;
@@ -156,21 +156,11 @@ export function TrackerForm<T extends NewTracker>({
           <Label>Campings</Label>
           <div className="flex flex-wrap gap-2 mt-1">
             {editedTracker.campings.map((camping) => (
-              <Badge
+              <CampingBadge
                 key={camping.id}
-                variant="secondary"
-                className="flex items-center gap-1"
-              >
-                {camping.name}
-                <button
-                  type="button"
-                  onClick={() => removeCamping(camping.id)}
-                  className="text-xs rounded-full hover:bg-destructive hover:text-destructive-foreground"
-                >
-                  <X size={14} />
-                  <span className="sr-only">Remove {camping.name}</span>
-                </button>
-              </Badge>
+                camping={camping}
+                onRemove={() => removeCamping(camping.id)}
+              />
             ))}
           </div>
         </div>

@@ -16,6 +16,11 @@ import type { Tracker } from "@/db/schema";
 import { trackersSchema } from "@/db/schema";
 import camelcaseKeys from "camelcase-keys";
 import { Portal } from "@/components/Portal";
+import {
+  createTracker,
+  removeTracker,
+  updateTracker,
+} from "@/components/trackers/actions";
 
 type TrackersProps = {
   trackers: Tracker[];
@@ -34,7 +39,7 @@ export function Trackers({ trackers }: TrackersProps) {
         "postgres_changes",
         { event: "*", schema: "public", table: "trackers" },
         (payload) => {
-          console.log("event", payload);
+          console.info("event", payload);
           setTrackersData((prev) => {
             if (payload.eventType === "INSERT") {
               const newTracker = trackersSchema.parse(
@@ -78,29 +83,20 @@ export function Trackers({ trackers }: TrackersProps) {
   };
 
   const handleSave = async (updatedTracker: Tracker) => {
-    await fetch("/api/tracker", {
-      method: "PUT",
-      body: JSON.stringify(updatedTracker),
-    });
+    await updateTracker(updatedTracker);
     setEditingTracker(null);
-    handleCancel();
+    closeModal();
   };
   const handleCreate = async (newTracker: NewTracker) => {
-    await fetch("/api/tracker", {
-      method: "POST",
-      body: JSON.stringify(newTracker),
-    });
-    handleCancel();
+    await createTracker(newTracker);
+    closeModal();
   };
   const handleRemove = async (tracker: Tracker) => {
-    await fetch("/api/tracker", {
-      method: "DELETE",
-      body: JSON.stringify({ id: tracker.id }),
-    });
-    handleCancel();
+    await removeTracker(tracker.id);
+    closeModal();
   };
 
-  const handleCancel = () => {
+  const closeModal = () => {
     setEditingTracker(null);
     setIsCreating(false);
   };
@@ -128,7 +124,7 @@ export function Trackers({ trackers }: TrackersProps) {
 
       <Dialog
         open={editingTracker !== null || isCreating}
-        onOpenChange={handleCancel}
+        onOpenChange={closeModal}
       >
         <DialogContent className="sm:max-w-[460px]">
           <DialogHeader>
@@ -140,7 +136,7 @@ export function Trackers({ trackers }: TrackersProps) {
             tracker={editingTracker ?? undefined}
             onSave={editingTracker ? handleSave : handleCreate}
             onRemove={editingTracker && !isCreating ? handleRemove : undefined}
-            onCancel={handleCancel}
+            onCancel={closeModal}
           />
         </DialogContent>
       </Dialog>

@@ -4,11 +4,15 @@ import { WEEK_DAYS } from "@/lib/date";
 import { DateRanges } from "@/components/trackers/DateRanges";
 import { Button } from "@/components/ui/button";
 import { EditIcon } from "lucide-react";
-import type { Tracker } from "@/db/schema";
+import type { Tracker, TrackingStateItem } from "@/db/schema";
 import { CampingBadge } from "@/components/trackers/CampingBadge";
+import { CampingStatsPopover } from "@/components/trackers/CampingStatsPopover";
 
-function getStats(tracker: Tracker, campingId: string) {
-  return tracker.trackingState[campingId] ?? null;
+function getStats(
+  tracker: Tracker,
+  campingId: string,
+): TrackingStateItem | undefined {
+  return tracker.trackingState[campingId];
 }
 
 interface CampingTrackerCardProps {
@@ -56,13 +60,21 @@ function CampingTrackerCard({
           <div>
             <span className="font-semibold mb-2">Campings:</span>
             <div className="flex flex-wrap gap-2">
-              {tracker.campings.map((camping) => (
-                <CampingBadge
-                  key={camping.id}
-                  camping={camping}
-                  stats={getStats(tracker, camping.id)}
-                />
-              ))}
+              {tracker.campings.map((camping) => {
+                const stats = getStats(tracker, camping.id);
+                return (
+                  <CampingStatsPopover
+                    key={camping.id}
+                    camping={camping}
+                    stats={stats}
+                  >
+                    <CampingBadge
+                      camping={camping}
+                      counter={stats?.sites.length}
+                    />
+                  </CampingStatsPopover>
+                );
+              })}
             </div>
           </div>
 
