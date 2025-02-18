@@ -74,6 +74,15 @@ export async function getCampingData(provider: string, id: string) {
   return await fetcher(id);
 }
 
+export async function refreshTracker(tracker: Tracker) {
+  const user = await currentUser();
+  if (user?.id) {
+    if (tracker.active) {
+      await handleTracker(tracker);
+    }
+  }
+}
+
 export async function updateTracker(data: Tracker) {
   const user = await currentUser();
   if (user?.id) {

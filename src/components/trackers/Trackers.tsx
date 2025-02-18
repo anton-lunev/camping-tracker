@@ -18,6 +18,7 @@ import camelcaseKeys from "camelcase-keys";
 import { Portal } from "@/components/Portal";
 import {
   createTracker,
+  refreshTracker,
   removeTracker,
   updateTracker,
 } from "@/components/trackers/actions";
@@ -102,7 +103,10 @@ export function Trackers({ trackers }: TrackersProps) {
   };
 
   const toggleActive = (tracker: Tracker) => {
-    handleSave({ ...tracker, active: !tracker.active });
+    void handleSave({ ...tracker, active: !tracker.active });
+  };
+  const handleRefresh = (tracker: Tracker) => {
+    void refreshTracker(tracker);
   };
 
   return (
@@ -119,6 +123,7 @@ export function Trackers({ trackers }: TrackersProps) {
       <CampingTrackerCards
         trackers={trackersData}
         onEdit={handleEdit}
+        onRefresh={handleRefresh}
         toggleActive={toggleActive}
       />
 

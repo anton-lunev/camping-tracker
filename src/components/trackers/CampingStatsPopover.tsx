@@ -27,6 +27,7 @@ export function CampingStatsPopover({
       <PopoverContent className="w-80 p-0 overflow-auto max-h-[320px]">
         <div className="flex flex-col">
           <header className="px-4 py-2 bg-background sticky top-0 z-10 border-b">
+            {/* TODO: add an actual link. */}
             <a href="#">{camping.name}</a>
           </header>
           <div className="p-4 flex flex-col gap-4">

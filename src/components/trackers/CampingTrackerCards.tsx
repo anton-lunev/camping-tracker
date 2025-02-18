@@ -7,6 +7,7 @@ import { EditIcon } from "lucide-react";
 import type { Tracker, TrackingStateItem } from "@/db/schema";
 import { CampingBadge } from "@/components/trackers/CampingBadge";
 import { CampingStatsPopover } from "@/components/trackers/CampingStatsPopover";
+import { RefreshButton } from "@/components/trackers/RefreshButton";
 
 function getStats(
   tracker: Tracker,
@@ -15,15 +16,17 @@ function getStats(
   return tracker.trackingState[campingId];
 }
 
-interface CampingTrackerCardProps {
+type CampingTrackerCardProps = {
   tracker: Tracker;
   onEdit: (id: string) => void;
+  onRefresh: (tracker: Tracker) => void;
   toggleActive: (tracker: Tracker) => void;
-}
+};
 
 function CampingTrackerCard({
   tracker,
   onEdit,
+  onRefresh,
   toggleActive,
 }: CampingTrackerCardProps) {
   return (
@@ -44,6 +47,10 @@ function CampingTrackerCard({
           </Button>
 
           <div className="ml-auto flex gap-1">
+            {tracker.active ? (
+              <RefreshButton onClick={() => onRefresh(tracker)} />
+            ) : null}
+
             <Button
               variant="outline"
               size="icon"
@@ -56,79 +63,69 @@ function CampingTrackerCard({
       </CardHeader>
 
       <CardContent className="flex flex-col flex-1 gap-4">
-        <div className="space-y-2">
-          <div>
-            <span className="font-semibold mb-2">Campings:</span>
-            <div className="flex flex-wrap gap-2">
-              {tracker.campings.map((camping) => {
-                const stats = getStats(tracker, camping.id);
-                return (
-                  <CampingStatsPopover
-                    key={camping.id}
+        <div>
+          <div className="font-semibold mb-0.5">Campings:</div>
+          <div className="flex flex-wrap gap-2">
+            {tracker.campings.map((camping) => {
+              const stats = getStats(tracker, camping.id);
+              return (
+                <CampingStatsPopover
+                  key={camping.id}
+                  camping={camping}
+                  stats={stats}
+                >
+                  <CampingBadge
                     camping={camping}
-                    stats={stats}
-                  >
-                    <CampingBadge
-                      camping={camping}
-                      counter={stats?.sites.length}
-                    />
-                  </CampingStatsPopover>
-                );
-              })}
-            </div>
+                    counter={stats?.sites.length}
+                  />
+                </CampingStatsPopover>
+              );
+            })}
           </div>
-
-          <div>
-            <span className="font-semibold mb-2">Tracking Period:</span>
-            <div className="flex gap-2">
-              <DateRanges
-                dates={[tracker.startDate, tracker.endDate]}
-                fullRange
-              />
-            </div>
-          </div>
-
-          {tracker.weekDays?.length || tracker.days?.length ? (
-            <div>
-              <span className="font-semibold mb-2">Tracking Days:</span>
-              <div className="flex flex-wrap gap-2">
-                {tracker?.weekDays.map((day) => (
-                  <Badge variant="secondary" key={day}>
-                    {WEEK_DAYS[day]}
-                  </Badge>
-                ))}
-                {tracker.days?.length ? (
-                  <DateRanges variant="secondary" dates={tracker.days} />
-                ) : null}
-              </div>
-            </div>
-          ) : null}
         </div>
+
+        <div>
+          <div className="font-semibold mb-0.5">Tracking Period:</div>
+          <div className="flex gap-2">
+            <DateRanges
+              dates={[tracker.startDate, tracker.endDate]}
+              fullRange
+            />
+          </div>
+        </div>
+
+        {tracker.weekDays?.length || tracker.days?.length ? (
+          <div>
+            <div className="font-semibold mb-0.5">Tracking Days:</div>
+            <div className="flex flex-wrap gap-2">
+              {tracker?.weekDays.map((day) => (
+                <Badge variant="secondary" key={day}>
+                  {WEEK_DAYS[day]}
+                </Badge>
+              ))}
+              {tracker.days?.length ? (
+                <DateRanges variant="secondary" dates={tracker.days} />
+              ) : null}
+            </div>
+          </div>
+        ) : null}
       </CardContent>
     </Card>
   );
 }
 
-interface CampingTrackerCardsProps {
+type CampingTrackerCardsProps = {
   trackers: Tracker[];
-  onEdit: (id: string) => void;
-  toggleActive: (tracker: Tracker) => void;
-}
+} & Omit<CampingTrackerCardProps, "tracker">;
 
 export function CampingTrackerCards({
   trackers,
-  onEdit,
-  toggleActive,
+  ...props
 }: CampingTrackerCardsProps) {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {trackers.map((tracker) => (
-        <CampingTrackerCard
-          key={tracker.id}
-          tracker={tracker}
-          onEdit={onEdit}
-          toggleActive={toggleActive}
-        />
+        <CampingTrackerCard key={tracker.id} tracker={tracker} {...props} />
       ))}
     </div>
   );
