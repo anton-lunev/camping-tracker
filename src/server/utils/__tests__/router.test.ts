@@ -25,7 +25,7 @@ describe("router.resolve()", () => {
 
     test("throws error for missing parameter", () => {
       expect(() => router.resolve("/users/:id", {})).toThrowError(
-        "Missing parameter: id",
+        "Missing param: id",
       );
     });
 

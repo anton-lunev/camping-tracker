@@ -73,6 +73,7 @@ function CampingTrackerCard({
                   key={camping.id}
                   camping={camping}
                   stats={stats}
+                  isActive={tracker.active}
                 >
                   <CampingBadge
                     camping={camping}

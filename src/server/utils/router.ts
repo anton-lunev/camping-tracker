@@ -9,22 +9,18 @@ export const router = {
     let resolvedUrl = url;
 
     if (params) {
-      const { pathname } = new URL(url, "https://test.io"); // Use a dummy base URL to parse relative URLs
-      const resolvedPathname = pathname
-        .split("/")
-        .map((segment) => {
-          if (segment.startsWith(":")) {
-            const paramName = segment.substring(1);
-            const value = params[paramName];
-            if (isNil(value)) {
-              throw new Error(`Missing parameter: ${paramName}`);
-            }
-            return value;
-          }
-          return segment;
-        })
-        .join("/");
-      resolvedUrl = resolvedUrl.replace(pathname, resolvedPathname);
+      resolvedUrl = url.replace(/:(\w+)/g, (_, key) => {
+        if (isNil(params[key])) {
+          throw new Error(`Missing param: ${key} in ${url}`);
+        }
+        return params[key].toString();
+      });
+      const missingParams = resolvedUrl.match(/:(\w+)/g);
+      if (missingParams) {
+        throw new Error(
+          `Missing params: ${missingParams.join(", ")} in ${url}`,
+        );
+      }
     }
 
     if (queryParams) {

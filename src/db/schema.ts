@@ -19,7 +19,7 @@ export type Camping = {
 
 export type TrackingStateItem = {
   campingId: string;
-  sites: { date: string; siteId: string; isFree: boolean }[];
+  sites: { date: string; siteId: string; siteName: string; isFree: boolean }[];
 };
 export type TrackingState = Record<string, TrackingStateItem>;
 

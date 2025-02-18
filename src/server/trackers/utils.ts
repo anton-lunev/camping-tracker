@@ -11,6 +11,7 @@ export function getTrackingStateItem(
       data?.map((item) => ({
         date: item.date,
         siteId: item.siteId,
+        siteName: item.siteName,
         isFree: true,
       })) ?? [],
   };
