@@ -32,10 +32,10 @@ export function CampingBadge({
         }
       />
 
-      <span className="block truncate mr-1">{camping.name}</span>
+      <span className="mr-1 block truncate">{camping.name}</span>
 
       {!isNil(counter) ? (
-        <Badge variant="green" className="px-1 py-0 -ml-1 min-w-[18px]">
+        <Badge variant="green" className="-ml-1 min-w-[18px] px-1 py-0">
           {counter}
         </Badge>
       ) : null}
@@ -44,7 +44,7 @@ export function CampingBadge({
         <button
           type="button"
           onClick={onRemove}
-          className="text-xs rounded-full hover:bg-destructive hover:text-destructive-foreground p-0.5"
+          className="hover:bg-destructive hover:text-destructive-foreground rounded-full p-0.5 text-xs"
         >
           <X size={14} />
           <span className="sr-only">Remove {camping.name}</span>

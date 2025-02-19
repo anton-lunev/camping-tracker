@@ -6,16 +6,16 @@ import { Portal } from "@/components/Portal";
 
 export function ConnectTelegram() {
   return (
-    <div className="max-w-md w-full space-y-4 text-center mb-8">
+    <div className="mb-8 w-full max-w-md space-y-4 text-center">
       <Portal targetId="header-slot">
-        <div className="flex flex-col gap-3 items-center">
+        <div className="flex flex-col items-center gap-3">
           <h1 className="text-3xl font-light text-white drop-shadow-sm">
             Link Your Account to Telegram
           </h1>
 
           <Button
             asChild
-            className="bg-[#1c93e3] hover:bg-[#1a8ad5] text-white w-fit mt-2"
+            className="mt-2 w-fit bg-[#1c93e3] text-white hover:bg-[#1a8ad5]"
           >
             <Link
               href="https://t.me/CampingTrackerBot"
@@ -32,7 +32,7 @@ export function ConnectTelegram() {
         href="https://t.me/CampingTrackerBot"
         target="_blank"
         rel="noopener noreferrer"
-        className="block relative w-full aspect-[16/9] my-4"
+        className="relative my-4 block aspect-[16/9] w-full"
       >
         <Image
           src="/telegram_bot.png"

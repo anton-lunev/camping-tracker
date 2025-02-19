@@ -1,9 +1,5 @@
-import type {
-  CampsitesResponse} from "./schema";
-import {
-  campgroundSchema,
-  campsitesResponseSchema,
-} from "./schema";
+import type { CampsitesResponse } from "./schema";
+import { campgroundSchema, campsitesResponseSchema } from "./schema";
 import { PROVIDER_CONFIG } from "./config";
 import { router } from "@/server/utils/router";
 import {

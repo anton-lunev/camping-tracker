@@ -32,7 +32,7 @@ function CampingTrackerCard({
   return (
     <Card
       key={tracker.id}
-      className="w-full flex flex-col md:min-w-[300px] md:max-w-[350px]"
+      className="bg-card/20 flex w-full flex-col backdrop-blur-xs transition-colors hover:border-gray-700 md:max-w-[350px] md:min-w-[300px]"
     >
       <CardHeader>
         <div className="flex items-center justify-center">
@@ -54,6 +54,7 @@ function CampingTrackerCard({
             <Button
               variant="outline"
               size="icon"
+              className="cursor-pointer"
               onClick={() => onEdit(tracker.id)}
             >
               <EditIcon />
@@ -62,9 +63,9 @@ function CampingTrackerCard({
         </div>
       </CardHeader>
 
-      <CardContent className="flex flex-col flex-1 gap-4">
+      <CardContent className="flex flex-1 flex-col gap-4">
         <div>
-          <div className="font-semibold mb-0.5">Campings:</div>
+          <div className="mb-0.5 font-semibold">Campings:</div>
           <div className="flex flex-wrap gap-2">
             {tracker.campings.map((camping) => {
               const stats = getStats(tracker, camping.id);
@@ -86,7 +87,7 @@ function CampingTrackerCard({
         </div>
 
         <div>
-          <div className="font-semibold mb-0.5">Tracking Period:</div>
+          <div className="mb-0.5 font-semibold">Tracking Period:</div>
           <div className="flex gap-2">
             <DateRanges
               dates={[tracker.startDate, tracker.endDate]}
@@ -97,7 +98,7 @@ function CampingTrackerCard({
 
         {tracker.weekDays?.length || tracker.days?.length ? (
           <div>
-            <div className="font-semibold mb-0.5">Tracking Days:</div>
+            <div className="mb-0.5 font-semibold">Tracking Days:</div>
             <div className="flex flex-wrap gap-2">
               {tracker?.weekDays.map((day) => (
                 <Badge variant="secondary" key={day}>
@@ -124,7 +125,7 @@ export function CampingTrackerCards({
   ...props
 }: CampingTrackerCardsProps) {
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 pb-6 md:grid-cols-2 lg:grid-cols-3">
       {trackers.map((tracker) => (
         <CampingTrackerCard key={tracker.id} tracker={tracker} {...props} />
       ))}

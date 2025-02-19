@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @plugin 'tailwindcss-animate';
 
@@ -70,9 +70,13 @@
 
   body {
     font-family: Arial, Helvetica, sans-serif;
+    background: radial-gradient(
+            ellipse at bottom,
+            rgba(27, 39, 53, 0.6) 0%,
+            var(--color-background) 100%
+    ) bottom fixed;
   }
 }
-
 
 @layer base {
   :root {
@@ -131,18 +135,18 @@
   }
 }
 
-
 @layer base {
   * {
     @apply border-border;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
   }
 }
 
-:is(.cl-footer, .cl-userButtonPopoverFooter) > [class^="cl-internal-"]:has(a[aria-label="Clerk logo"]) {
+:is(.cl-footer, .cl-userButtonPopoverFooter)
+> [class^="cl-internal-"]:has(a[aria-label="Clerk logo"]) {
   display: none;
 }
 

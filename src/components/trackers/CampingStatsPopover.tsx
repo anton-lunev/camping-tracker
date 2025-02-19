@@ -31,10 +31,12 @@ export function CampingStatsPopover({
 
   return (
     <Popover>
-      <PopoverTrigger className="max-w-full">{children}</PopoverTrigger>
-      <PopoverContent className="w-80 p-0 overflow-auto max-h-[320px]">
+      <PopoverTrigger className="max-w-full cursor-pointer">
+        {children}
+      </PopoverTrigger>
+      <PopoverContent className="max-h-[320px] w-80 overflow-auto p-0">
         <div className="flex flex-col">
-          <header className="px-4 py-2 bg-background sticky top-0 z-10 border-b">
+          <header className="bg-background sticky top-0 z-10 border-b px-4 py-2">
             <a
               target="_blank"
               href={getCampingUrl(camping.provider, camping.id)}
@@ -42,16 +44,16 @@ export function CampingStatsPopover({
               {stats?.sites.length ? (
                 <Badge
                   variant="green"
-                  className="px-1 py-0 min-w-[18px] mr-1 inline-block align-text-bottom"
+                  className="mr-1 inline-block min-w-[18px] px-1 py-0 align-text-bottom"
                 >
                   {stats?.sites.length}
                 </Badge>
               ) : null}
               <span className="hover:underline">{camping.name}</span>
-              <ExternalLinkIcon className="size-3 inline-block ml-2" />
+              <ExternalLinkIcon className="ml-2 inline-block size-3" />
             </a>
           </header>
-          <div className="p-4 flex flex-col gap-4">
+          <div className="flex flex-col gap-4 p-4">
             {groupedSites.length ? (
               groupedSites.map(([siteId, sites]) => {
                 const siteDates = sites.map((site) => site.date);
@@ -72,7 +74,7 @@ export function CampingStatsPopover({
                       </h4>
                     )}
 
-                    <div className="text-sm text-muted-foreground flex flex-wrap gap-1">
+                    <div className="text-muted-foreground flex flex-wrap gap-1 text-sm">
                       {siteDates.map((date) => (
                         <DateBadge key={date} date={date} variant="outline" />
                       ))}

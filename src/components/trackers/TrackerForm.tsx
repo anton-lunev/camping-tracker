@@ -154,7 +154,7 @@ export function TrackerForm<T extends NewTracker>({
       {editedTracker.campings.length ? (
         <div>
           <Label>Campings</Label>
-          <div className="flex flex-wrap gap-2 mt-1">
+          <div className="mt-1 flex flex-wrap gap-2">
             {editedTracker.campings.map((camping) => (
               <CampingBadge
                 key={camping.id}
@@ -233,7 +233,7 @@ export function TrackerForm<T extends NewTracker>({
             <Button
               id="specific-days"
               variant="outline"
-              className="w-full justify-start text-left font-normal mb-2"
+              className="mb-2 w-full justify-start text-left font-normal"
             >
               Select days
             </Button>
@@ -276,7 +276,7 @@ export function TrackerForm<T extends NewTracker>({
 
       <div>
         <Label htmlFor="active">Status</Label>
-        <div className="flex items-center space-x-2 mt-1">
+        <div className="mt-1 flex items-center space-x-2">
           <Checkbox
             id="active"
             checked={editedTracker.active}

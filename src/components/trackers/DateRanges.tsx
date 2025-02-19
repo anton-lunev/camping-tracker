@@ -31,7 +31,7 @@ export function DateRanges({
           <button
             type="button"
             onClick={() => onRemove(dates)}
-            className="text-xs rounded-full hover:bg-destructive hover:text-destructive-foreground"
+            className="hover:bg-destructive hover:text-destructive-foreground rounded-full text-xs"
           >
             <X size={14} />
             <span className="sr-only">Remove {formattedRange}</span>

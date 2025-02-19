@@ -7,8 +7,8 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 bg-[url(/bg.jpeg)] bg-cover bg-center">
-      <div className="w-fit h-fit  backdrop-blur-lg rounded-xl shadow-lg">
+    <div className="flex min-h-screen items-center justify-center bg-gray-900 bg-[url(/bg.jpeg)] bg-cover bg-center">
+      <div className="h-fit w-fit rounded-xl shadow-lg backdrop-blur-lg">
         <SignUp
           appearance={{
             variables: {

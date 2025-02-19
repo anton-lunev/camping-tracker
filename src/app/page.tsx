@@ -11,16 +11,16 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="flex justify-center items-center flex-col gap-4 w-full">
-        <div className="w-full flex justify-center items-center p-4 aspect-3840/600">
+      <div className="flex w-full flex-col items-center justify-center gap-4">
+        <div className="flex aspect-3840/600 w-full items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-contain bg-[url(/header.jpeg)] bg-no-repeat aspect-3840/600"
+            className="absolute inset-0 aspect-3840/600 bg-[url(/header.jpeg)] bg-contain bg-no-repeat"
             style={{
               maskImage:
                 "linear-gradient(180deg, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%)",
             }}
           />
-          <div className="flex gap-2 z-1" id="header-slot"></div>
+          <div className="z-1 flex gap-2" id="header-slot"></div>
         </div>
 
         <header className="absolute top-2 right-1 z-2">
