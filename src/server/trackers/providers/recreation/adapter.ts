@@ -1,9 +1,8 @@
 import type { CampsiteData, ProviderAdapter } from "../providerAdapter";
 import { PROVIDER_CONFIG } from "./config";
 import { router } from "@/server/utils/router";
-import { fetchData } from "@/server/trackers/providers/recreation/fetch";
-import { getCampsiteData } from "@/server/trackers/providers/recreation/getCampsiteData";
-import { fetchCampingInfo } from "@/server/trackers/providers/reserve-california/fetch";
+import { fetchCampingInfo, fetchData } from "./fetch";
+import { getCampsiteData } from "./getCampsiteData";
 
 export class RecreationAdapter implements ProviderAdapter {
   async getCampsiteData(params: {

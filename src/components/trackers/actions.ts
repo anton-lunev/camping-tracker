@@ -9,11 +9,31 @@ import {
 } from "@/db/queries/trackers";
 import { getProviderFromString } from "@/server/trackers/providers/providerAdapterFactory";
 import { currentUser } from "@clerk/nextjs/server";
-import type { Tracker } from "@/db/schema";
+import type { Camping, Tracker } from "@/db/schema";
 import { handleTracker } from "@/server/trackers/handleTracker";
 import { getProviderAdapter } from "@/server/trackers/providers";
+import { parseCampingUrl } from "./utils";
 
-export async function getCampingData(provider: string, id: string) {
+export async function getCampingDataByUrl(
+  campingUrl: string,
+): Promise<Camping | null> {
+  const { provider, parkId, campingId } = parseCampingUrl(campingUrl);
+  const id = parkId ? `${parkId}:${campingId}` : campingId;
+
+  try {
+    const data = await getCampingInfo(provider, id);
+
+    return {
+      ...data,
+      provider,
+      id,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function getCampingInfo(provider: string, id: string) {
   const adapter = getProviderAdapter(getProviderFromString(provider));
   return adapter.getCampingInfo(id);
 }

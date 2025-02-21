@@ -34,3 +34,11 @@ export const campgroundSchema = z.object({
     facility_name: z.string(),
   }),
 });
+
+export const campgroundAssetsSchema = z.object({
+  result: z.array(
+    z.object({
+      url: z.string(),
+    }),
+  ),
+});

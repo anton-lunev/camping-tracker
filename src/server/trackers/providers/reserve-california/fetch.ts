@@ -1,14 +1,7 @@
 import type { SearchResponse } from "@/server/trackers/providers/reserve-california/schema";
-import {
-  campgroundSchema,
-  searchResponseSchema,
-} from "@/server/trackers/providers/reserve-california/schema";
+import { campgroundSchema, searchResponseSchema } from "@/server/trackers/providers/reserve-california/schema";
 import { PROVIDER_CONFIG } from "./config";
-import {
-  BaseError,
-  handleZodError,
-  NetworkError,
-} from "@/server/trackers/common/errors";
+import { BaseError, handleZodError, NetworkError } from "@/server/trackers/common/errors";
 import { z } from "zod";
 import { getMonthDatePairs } from "@/lib/date";
 import { router } from "@/server/utils/router";
@@ -85,17 +78,23 @@ export async function fetchData({
 
 export async function fetchCampingInfo(
   campingId: string,
+  parkId: string,
 ): Promise<CampingInfo> {
-  const response = await fetch(
-    router.resolve(PROVIDER_CONFIG.CAMPGROUND_API_URL, { campingId }),
-    { headers: { "Content-Type": "application/json" } },
-  );
+  const url = router.resolve(PROVIDER_CONFIG.CAMPGROUND_API_URL, { campingId });
+  const response = await fetch(url, {
+    headers: { "Content-Type": "application/json" },
+  });
   if (!response.ok || response.status !== 200) {
-    throw new Error("Failed to fetch camping info from reservecalifornia");
+    throw new Error(
+      `Failed to fetch camping info from reservecalifornia, url: ${url}`,
+    );
   }
 
   const rawData = await response.json();
 
   const data = campgroundSchema.parse(rawData);
-  return { name: data.Name };
+  return {
+    name: data.Name,
+    imgUrls: [router.resolve(PROVIDER_CONFIG.IMG_URL, { parkId })],
+  };
 }

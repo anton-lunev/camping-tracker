@@ -17,6 +17,7 @@ export type NotificationData = {
 
 export type CampingInfo = {
   name: string;
+  imgUrls?: string[];
 };
 
 export interface ProviderAdapter {

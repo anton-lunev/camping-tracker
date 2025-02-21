@@ -5,4 +5,6 @@ export const PROVIDER_CONFIG = {
     "https://calirdr.usedirect.com/RDR/rdr/fd/facilities/:campingId",
   CAMPGROUND_URL:
     "https://www.reservecalifornia.com/Web/Default.aspx#!park/:parkId/:campingId",
+  IMG_URL:
+    "https://cali-content.usedirect.com/Images/California/ParkImages/Place/:parkId.jpg",
 } as const;

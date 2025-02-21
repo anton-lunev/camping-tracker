@@ -14,6 +14,7 @@ import { createSelectSchema } from "drizzle-zod";
 export type Camping = {
   id: string;
   name: string;
+  imgUrls?: string[];
   provider: string;
 };
 

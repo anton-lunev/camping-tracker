@@ -1,6 +1,5 @@
-import type { ChangeEvent, FormEvent } from "react";
+import type { FormEvent } from "react";
 import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -10,15 +9,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { getCampingData } from "./actions";
-import { Trash2Icon } from "lucide-react";
-import { parseCampingUrl } from "@/components/trackers/utils";
+import { PlusIcon, Trash2Icon } from "lucide-react";
 import type { NewTracker } from "@/db/queries/trackers";
 import { DaysOfWeek } from "@/components/trackers/DaysOfWeek";
 import { DateRanges } from "@/components/trackers/DateRanges";
 import { formatDate, toDate } from "@/lib/date";
 import type { Camping } from "@/db/schema";
 import { CampingBadge } from "@/components/trackers/CampingBadge";
+import { AddCampingPopoverContent } from "./AddCampingPopoverContent";
 
 interface TrackerFormProps<T extends NewTracker> {
   tracker?: T;
@@ -37,17 +35,6 @@ const defaultTracker: Omit<NewTracker, "owner"> = {
   interval: 60,
 };
 
-async function getCampingDataByUrl(campingUrl: string): Promise<Camping> {
-  const { provider, parkId, campingId } = parseCampingUrl(campingUrl);
-  const data = await getCampingData(provider, campingId);
-
-  return {
-    id: parkId ? `${parkId}:${campingId}` : campingId,
-    name: data.name,
-    provider,
-  };
-}
-
 export function TrackerForm<T extends NewTracker>({
   tracker,
   onSave,
@@ -61,28 +48,6 @@ export function TrackerForm<T extends NewTracker>({
   useEffect(() => {
     setEditedTracker(tracker ?? (defaultTracker as T));
   }, [tracker]);
-
-  const [campingUrl, setCampingUrl] = useState("");
-  const handleCampingUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setCampingUrl(e.target.value);
-  };
-
-  const addCamping = async () => {
-    try {
-      const newCamping = await getCampingDataByUrl(campingUrl);
-
-      setEditedTracker((prev) => ({
-        ...prev,
-        campings: [
-          ...prev.campings.filter((camp) => camp.id !== newCamping.id),
-          newCamping,
-        ],
-      }));
-      setCampingUrl("");
-    } catch (error) {
-      console.error("Error adding camping:", error);
-    }
-  };
 
   const removeCamping = (campingId: string) => {
     setEditedTracker((prev) => ({
@@ -137,23 +102,8 @@ export function TrackerForm<T extends NewTracker>({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="campingUrl">Camping URL</Label>
-        <div className="flex items-center space-x-2">
-          <Input
-            id="campingUrl"
-            value={campingUrl}
-            onChange={handleCampingUrlChange}
-            placeholder="Insert camping url"
-          />
-          <Button type="button" onClick={addCamping}>
-            Add
-          </Button>
-        </div>
-      </div>
-
-      {editedTracker.campings.length ? (
-        <div>
-          <Label>Campings</Label>
+        <Label>Campings</Label>
+        {editedTracker.campings.length ? (
           <div className="mt-1 flex flex-wrap gap-2">
             {editedTracker.campings.map((camping) => (
               <CampingBadge
@@ -163,8 +113,33 @@ export function TrackerForm<T extends NewTracker>({
               />
             ))}
           </div>
+        ) : null}
+
+        <div className="mt-1">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button type="button" variant="outline" size="icon">
+                <PlusIcon className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80" align="start" side="right">
+              <AddCampingPopoverContent
+                onCampingAdd={(newCamping: Camping) => {
+                  setEditedTracker((prev) => ({
+                    ...prev,
+                    campings: [
+                      ...prev.campings.filter(
+                        (camp) => camp.id !== newCamping.id,
+                      ),
+                      newCamping,
+                    ],
+                  }));
+                }}
+              />
+            </PopoverContent>
+          </Popover>
         </div>
-      ) : null}
+      </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>

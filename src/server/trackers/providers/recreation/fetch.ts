@@ -1,5 +1,10 @@
-import type { CampsitesResponse } from "./schema";
-import { campgroundSchema, campsitesResponseSchema } from "./schema";
+import type {
+  CampsitesResponse} from "./schema";
+import {
+  campgroundAssetsSchema,
+  campgroundSchema,
+  campsitesResponseSchema,
+} from "./schema";
 import { PROVIDER_CONFIG } from "./config";
 import { router } from "@/server/utils/router";
 import {
@@ -76,5 +81,18 @@ export async function fetchCampingInfo(
   const rawData = await response.json();
 
   const data = campgroundSchema.parse(rawData);
-  return { name: data.campground.facility_name };
+
+  const assetsUrl = router.resolve(PROVIDER_CONFIG.ASSET_API_URL, {
+    campingId,
+  });
+  const assetsResponse = await fetch(assetsUrl, {
+    headers: { "Content-Type": "application/json" },
+  });
+  const assetsRawData = await assetsResponse.json();
+  const assets = campgroundAssetsSchema.parse(assetsRawData);
+
+  return {
+    name: data.campground.facility_name,
+    imgUrls: assets.result.map((asset) => asset.url),
+  };
 }
