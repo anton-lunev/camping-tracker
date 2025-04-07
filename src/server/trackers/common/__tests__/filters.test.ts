@@ -105,8 +105,8 @@ describe("keepOnlyNew", () => {
     const trackingState: TrackingStateItem = {
       campingId: "tracker1",
       sites: [
-        { date: "2024-03-19", siteId: "A1", isFree: true },
-        { date: "2024-03-21", siteId: "A2", isFree: false },
+        { date: "2024-03-19", siteId: "A1", siteName: "A1", isFree: true },
+        { date: "2024-03-21", siteId: "A2", siteName: "A2", isFree: false },
       ],
     };
     const campData: CampsiteData = { ...sampleData[0] }; // 2024-03-20, A1 - not in trackingState
@@ -116,7 +116,9 @@ describe("keepOnlyNew", () => {
   it("should return false if campsite is found in trackingState", () => {
     const trackingState: TrackingStateItem = {
       campingId: "tracker1",
-      sites: [{ date: "2024-03-20", siteId: "A1", isFree: true }],
+      sites: [
+        { date: "2024-03-20", siteId: "A1", siteName: "A1", isFree: true },
+      ],
     };
     const campData: CampsiteData = { ...sampleData[0] }; // 2024-03-20, A1 - in trackingState
     expect(keepOnlyNew(trackingState, campData)).toBe(false);
@@ -124,9 +126,9 @@ describe("keepOnlyNew", () => {
 });
 
 describe("filterCertainDays", () => {
-  it("should return true if no days are provided (ignore filter)", () => {
+  it("should return false if no days are provided (ignore filter)", () => {
     const campData: CampsiteData = { ...sampleData[0] };
-    expect(filterCertainDays(campData, [])).toBe(true);
+    expect(filterCertainDays(campData, [])).toBe(false);
   });
 
   it("should return true if date is included in the filter", () => {

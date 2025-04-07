@@ -43,10 +43,11 @@ export function applyFilters(
 ) {
   const allSpots = campsiteData
     .filter((item) => filterFreeSpots(item))
-    .filter(
-      (item) =>
-        filterByWeekDay(item, filters.weekDays) ||
-        filterCertainDays(item, filters.days),
+    .filter((item) =>
+      filters.weekDays.length || filters.days.length
+        ? filterByWeekDay(item, filters.weekDays) ||
+          filterCertainDays(item, filters.days)
+        : true,
     );
 
   const newSpots = allSpots.filter((item) =>
