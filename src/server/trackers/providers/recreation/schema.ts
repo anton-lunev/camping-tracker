@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-const CapacityRating = z.enum(["Single", "Double", "Triple"]);
 const AvailabilityStatus = z.enum(["Not Reservable", "Reserved", "Available"]);
 
 export const campsiteSchema = z.object({
@@ -14,7 +13,7 @@ export const campsiteSchema = z.object({
   type_of_use: z.string(),
   min_num_people: z.number(),
   max_num_people: z.number(),
-  capacity_rating: CapacityRating,
+  capacity_rating: z.string().optional(),
   hide_external: z.boolean(),
   campsite_rules: z.union([z.object({}), z.null()]),
   supplemental_camping: z.union([z.object({}), z.null()]),
