@@ -43,8 +43,12 @@ export function applyFilters(
 ) {
   const allSpots = campsiteData
     .filter((item) => filterFreeSpots(item))
-    .filter((item) => filterByWeekDay(item, filters.weekDays))
-    .filter((item) => filterCertainDays(item, filters.days));
+    .filter(
+      (item) =>
+        filterByWeekDay(item, filters.weekDays) ||
+        filterCertainDays(item, filters.days),
+    );
+
   const newSpots = allSpots.filter((item) =>
     keepOnlyNew(filters.trackingState, item),
   );
