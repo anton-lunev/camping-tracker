@@ -27,7 +27,7 @@ export function keepOnlyNew(
 
 /** Filters camp data based on specific dates. */
 export function filterCertainDays(campData: CampsiteData, days: string[]) {
-  if (!days.length) return true; // ignore filter if no days provided
+  if (!days.length) return false; // ignore filter if no days provided
 
   const daysFormatted = days.map(getFormattedDateWithoutTz);
   return daysFormatted.includes(getFormattedDateWithoutTz(campData.date));
