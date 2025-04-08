@@ -15,6 +15,7 @@ export const bot = createGlobal("bot", () => {
 
   void bot.api.setMyCommands([
     { command: "link", description: "Link account" },
+    { command: "pin", description: "Pin app link" },
   ]);
 
   bot.command(["link", "start"], async (ctx) => {
@@ -31,6 +32,20 @@ export const bot = createGlobal("bot", () => {
     await ctx.reply(
       `Welcome!\nFollow the link to connect your account: \nhttps://camping-tracker.vercel.app/link?token=${token}`,
     );
+  });
+
+  bot.command(["pin"], async (ctx) => {
+    console.log(ctx);
+    logger.debug("command", ctx);
+    const chatId = ctx.update.message?.chat.id;
+    if (!chatId) {
+      return await ctx.reply("Cannot retrieve your chat data");
+    }
+
+    const linkMessage = await ctx.reply(
+      "🏕 [https://camping-tracker.vercel.app/](https://camping-tracker.vercel.app/)",
+    );
+    await bot.api.pinChatMessage(chatId, linkMessage.message_id);
   });
 
   bot.catch((botError) => {
