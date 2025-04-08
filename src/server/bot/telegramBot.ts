@@ -43,7 +43,7 @@ export const bot = createGlobal("bot", () => {
     }
 
     const linkMessage = await ctx.reply(
-      "🏕 [https://camping-tracker.vercel.app/](https://camping-tracker.vercel.app/)",
+      "🏕 https://camping-tracker.vercel.app",
     );
     await bot.api.pinChatMessage(chatId, linkMessage.message_id);
   });
