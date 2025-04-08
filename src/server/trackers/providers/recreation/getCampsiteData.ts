@@ -6,9 +6,9 @@ import { getFormattedDateWithoutTz } from "@/lib/date";
 export function getCampsiteData(
   response: CampsitesResponse,
   campingId: string,
+  campingName: string,
 ): CampsiteData[] {
   const availableSpots: CampsiteData[] = [];
-
   for (const campsite of Object.values(response.campsites)) {
     for (const [date, value] of Object.entries(campsite.availabilities)) {
       availableSpots.push({
@@ -16,7 +16,7 @@ export function getCampsiteData(
         siteId: campsite.campsite_id,
         siteName: campsite.site,
         campingId,
-        campingName: campsite.loop,
+        campingName: campingName ?? campsite.loop,
         isFree: value === "Available",
       });
     }

@@ -41,6 +41,7 @@ export const findCampsAndNotify = async ({
     });
 
     const { allSpots, newSpots } = applyFilters(results, {
+      dateRange: [startDate, endDate],
       days,
       weekDays,
       trackingState,

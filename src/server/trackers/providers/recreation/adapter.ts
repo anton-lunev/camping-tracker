@@ -10,8 +10,11 @@ export class RecreationAdapter implements ProviderAdapter {
     startDate: string;
     endDate: string;
   }) {
+    const campingInfo = await this.getCampingInfo(params.campingId);
     const responses = await fetchData(params);
-    return responses.flatMap((res) => getCampsiteData(res, params.campingId));
+    return responses.flatMap((res) =>
+      getCampsiteData(res, params.campingId, campingInfo.name),
+    );
   }
 
   getCampingInfo(campingId: string) {

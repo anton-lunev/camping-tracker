@@ -9,7 +9,7 @@ const RANGE_FORMAT = new Intl.DateTimeFormat("en", {
   day: "numeric",
 });
 
-function getDateWithoutTz(date: string) {
+export function getDateWithoutTz(date: string) {
   const [datePart] = date.split("T");
   if (!datePart) {
     throw new Error("Invalid date format");

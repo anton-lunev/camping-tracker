@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   applyFilters,
+  filterByDateRange,
   filterByWeekDay,
   filterCertainDays,
   filterFreeSpots,
@@ -151,9 +152,64 @@ describe("filterCertainDays", () => {
   });
 });
 
+describe("filterByDateRange", () => {
+  it("should return false if date range is incomplete", () => {
+    const campData: CampsiteData = { ...sampleData[0] }; // 2024-03-20
+    expect(filterByDateRange(campData, ["", ""])).toBe(false);
+    expect(filterByDateRange(campData, ["2024-03-19", ""])).toBe(false);
+    expect(filterByDateRange(campData, ["", "2024-03-22"])).toBe(false);
+  });
+
+  it("should return true if date is within the range", () => {
+    const campData: CampsiteData = { ...sampleData[0] }; // 2024-03-20
+    expect(filterByDateRange(campData, ["2024-03-19", "2024-03-22"])).toBe(
+      true,
+    );
+  });
+
+  it("should return true if date is at the start of the range", () => {
+    const campData: CampsiteData = { ...sampleData[0] }; // 2024-03-20
+    expect(filterByDateRange(campData, ["2024-03-20", "2024-03-22"])).toBe(
+      true,
+    );
+  });
+
+  it("should return true if date is at the end of the range", () => {
+    const campData: CampsiteData = { ...sampleData[2] }; // 2024-03-22
+    expect(filterByDateRange(campData, ["2024-03-20", "2024-03-22"])).toBe(
+      true,
+    );
+  });
+
+  it("should return false if date is before the range", () => {
+    const campData: CampsiteData = { ...sampleData[0] }; // 2024-03-20
+    expect(filterByDateRange(campData, ["2024-03-21", "2024-03-25"])).toBe(
+      false,
+    );
+  });
+
+  it("should return false if date is after the range", () => {
+    const campData: CampsiteData = { ...sampleData[2] }; // 2024-03-22
+    expect(filterByDateRange(campData, ["2024-03-15", "2024-03-21"])).toBe(
+      false,
+    );
+  });
+
+  it("should handle different date formats in date range", () => {
+    const campData: CampsiteData = { ...sampleData[1] }; // 2024-03-21
+    expect(
+      filterByDateRange(campData, [
+        "2024-03-20T12:00:00.000Z",
+        "2024-03-22T23:59:59.999Z",
+      ]),
+    ).toBe(true);
+  });
+});
+
 describe("applyFilters", () => {
   it("should apply all filters correctly and return allSpots and newSpots", () => {
     const filters = {
+      dateRange: ["2024-03-19", "2024-03-22"] as [string, string],
       days: ["2024-03-20"], // Filter for 2024-03-20
       weekDays: [3], // Filter for Wednesday (2024-03-20)
       trackingState: {
@@ -172,6 +228,7 @@ describe("applyFilters", () => {
 
   it("Corrected test case: should apply all filters correctly and return allSpots and newSpots for site2/A2 on 2024-03-22", () => {
     const filters = {
+      dateRange: ["2024-03-19", "2024-03-22"] as [string, string],
       days: ["2024-03-22"], // Filter for 2024-03-22
       weekDays: [5], // Filter for Friday (2024-03-22 is Friday)
       trackingState: {
@@ -192,6 +249,7 @@ describe("applyFilters", () => {
 
   it("Test case with no filters, only free spots", () => {
     const filtersNoFilters = {
+      dateRange: ["2024-03-19", "2024-03-22"] as [string, string],
       days: [],
       weekDays: [],
       trackingState: undefined,
@@ -209,5 +267,39 @@ describe("applyFilters", () => {
       sampleData[4], // A2 (2024-03-21) - Free
       sampleData[5], // A2 (2024-03-22) - Free
     ]);
+  });
+
+  it("should apply only dateRange filter when other filters are not provided", () => {
+    const filters = {
+      dateRange: ["2024-03-21", "2024-03-22"] as [string, string],
+      days: [],
+      weekDays: [],
+      trackingState: undefined,
+    };
+
+    const { allSpots, newSpots } = applyFilters(sampleData, filters);
+
+    expect(allSpots).toEqual([
+      sampleData[4], // A2 (2024-03-21) - Free
+      sampleData[5], // A2 (2024-03-22) - Free
+    ]);
+    expect(newSpots).toEqual([
+      sampleData[4], // A2 (2024-03-21) - Free
+      sampleData[5], // A2 (2024-03-22) - Free
+    ]);
+  });
+
+  it("should return empty arrays when dateRange is incomplete", () => {
+    const filters = {
+      dateRange: ["", ""] as [string, string],
+      days: [],
+      weekDays: [],
+      trackingState: undefined,
+    };
+
+    const { allSpots, newSpots } = applyFilters(sampleData, filters);
+
+    expect(allSpots).toEqual([]);
+    expect(newSpots).toEqual([]);
   });
 });

@@ -1,5 +1,9 @@
 import type { CampsiteData } from "@/server/trackers/providers/providerAdapter";
-import { getDayOfWeek, getFormattedDateWithoutTz } from "@/lib/date";
+import {
+  getDateWithoutTz,
+  getDayOfWeek,
+  getFormattedDateWithoutTz,
+} from "@/lib/date";
 import type { TrackingStateItem } from "@/db/schema";
 
 export function filterFreeSpots(campData: CampsiteData) {
@@ -33,15 +37,31 @@ export function filterCertainDays(campData: CampsiteData, days: string[]) {
   return daysFormatted.includes(getFormattedDateWithoutTz(campData.date));
 }
 
+/** Filters camp data based on date range. */
+export function filterByDateRange(
+  campData: CampsiteData,
+  dateRange: [string, string],
+) {
+  if (!dateRange[0] || !dateRange[1]) return false; // return false if date range is incomplete
+
+  const campDate = getDateWithoutTz(campData.date);
+  const startDate = getDateWithoutTz(dateRange[0]);
+  const endDate = getDateWithoutTz(dateRange[1]);
+
+  return campDate >= startDate && campDate <= endDate;
+}
+
 export function applyFilters(
   campsiteData: CampsiteData[],
   filters: {
+    dateRange: [string, string];
     days: string[];
     weekDays: number[];
     trackingState?: TrackingStateItem;
   },
 ) {
   const allSpots = campsiteData
+    .filter((item) => filterByDateRange(item, filters.dateRange))
     .filter((item) => filterFreeSpots(item))
     .filter((item) =>
       filters.weekDays.length || filters.days.length
