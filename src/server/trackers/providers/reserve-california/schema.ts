@@ -34,7 +34,7 @@ const unitSchema = z.object({
   IsWebViewable: z.boolean(),
   IsFiltered: z.boolean(),
   UnitCategoryId: z.number(),
-  SleepingUnitIds: z.array(z.number()),
+  SleepingUnitIds: z.array(z.number()).nullish(),
   UnitTypeGroupId: z.number(),
   UnitTypeId: z.number(),
   UseType: z.number(),
