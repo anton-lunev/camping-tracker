@@ -4,12 +4,18 @@ import { getUserDataByToken, removeToken } from "@/server/bot/token";
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-function sendSuccessMessage(chatId: number) {
-  return bot.api.sendMessage(
+async function sendSuccessMessage(chatId: number) {
+  await bot.api.sendMessage(
     chatId,
     "🎉*Congrats\\! Your account is connected\\.*\nNow you can start tracking campsites 🏕",
     { parse_mode: "MarkdownV2" },
   );
+  const linkMessage = await bot.api.sendMessage(
+    chatId,
+    "🏕 [https://camping-tracker.vercel.app/](https://camping-tracker.vercel.app/)",
+    { parse_mode: "Markdown" },
+  );
+  await bot.api.pinChatMessage(chatId, linkMessage.message_id);
 }
 
 function sendErrorMessage(chatId: number) {
