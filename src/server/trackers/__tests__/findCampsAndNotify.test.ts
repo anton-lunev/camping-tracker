@@ -85,6 +85,7 @@ describe("findCampsAndNotify", () => {
   const mockAdapter = {
     getCampsiteData: vi.fn().mockResolvedValue(sampleData),
     getNotificationData: vi.fn().mockReturnValue({ some: "data" }),
+    getCampingInfo: vi.fn().mockReturnValue({ name: "Loop A" }),
   };
   beforeEach(() => {
     vi.clearAllMocks();
@@ -122,7 +123,9 @@ describe("findCampsAndNotify", () => {
   it("should not post notification when no new spots exist", async () => {
     const trackingState: TrackingStateItem = {
       campingId: "site1",
-      sites: [{ siteId: "A1", date: "2024-03-20", isFree: true }],
+      sites: [
+        { siteId: "A1", siteName: "A1", date: "2024-03-20", isFree: true },
+      ],
     };
 
     await findCampsAndNotify({
@@ -144,6 +147,7 @@ describe("findCampsAndNotify", () => {
     vi.mocked(ProviderAdapterFactory.getAdapter).mockReturnValue({
       getCampsiteData: vi.fn().mockRejectedValue(error),
       getNotificationData: vi.fn().mockReturnValue({ some: "data" }),
+      getCampingInfo: vi.fn().mockReturnValue({ name: "Loop A" }),
     });
 
     await findCampsAndNotify({

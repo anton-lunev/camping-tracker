@@ -1,18 +1,11 @@
 import { z } from "zod";
 
-const AvailabilityStatus = z.enum([
-  "Not Reservable",
-  "Reserved",
-  "Available",
-  "Closed",
-]);
-
 export const campsiteSchema = z.object({
   campsite_id: z.string(),
   site: z.string(),
   loop: z.string(),
   campsite_reserve_type: z.string(),
-  availabilities: z.record(AvailabilityStatus),
+  availabilities: z.record(z.string()),
   quantities: z.record(z.number()),
   campsite_type: z.string(),
   type_of_use: z.string(),
