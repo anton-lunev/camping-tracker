@@ -74,9 +74,9 @@ describe("filterFreeSpots", () => {
 });
 
 describe("filterByWeekDay", () => {
-  it("should return true if no weekdays are provided (ignore filter)", () => {
+  it("should return false if no weekdays are provided (ignore filter)", () => {
     const campData: CampsiteData = { ...sampleData[0] };
-    expect(filterByWeekDay(campData, [])).toBe(true);
+    expect(filterByWeekDay(campData, [])).toBe(false);
   });
 
   it("should return true if weekday is included in the filter", () => {

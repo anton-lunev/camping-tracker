@@ -8,7 +8,7 @@ export function filterFreeSpots(campData: CampsiteData) {
 
 /** Filters camp data based on specific weekdays. */
 export function filterByWeekDay(campData: CampsiteData, weekDays: number[]) {
-  if (!weekDays.length) return true; // ignore filter if no weekdays provided
+  if (!weekDays.length) return false;
   const weekDay = getDayOfWeek(campData.date);
   return weekDay ? weekDays.includes(weekDay) : false;
 }
