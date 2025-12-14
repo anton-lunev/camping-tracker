@@ -5,8 +5,8 @@ export const campsiteSchema = z.object({
   site: z.string(),
   loop: z.string(),
   campsite_reserve_type: z.string(),
-  availabilities: z.record(z.string()),
-  quantities: z.record(z.number()),
+  availabilities: z.record(z.string(), z.string()),
+  quantities: z.record(z.string(), z.number()),
   campsite_type: z.string(),
   type_of_use: z.string(),
   min_num_people: z.number(),
@@ -20,7 +20,7 @@ export const campsiteSchema = z.object({
 export type Campsite = z.infer<typeof campsiteSchema>;
 
 export const campsitesResponseSchema = z.object({
-  campsites: z.record(campsiteSchema),
+  campsites: z.record(z.string(), campsiteSchema),
   count: z.number(),
 });
 

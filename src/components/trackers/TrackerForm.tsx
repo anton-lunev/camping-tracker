@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -41,13 +41,16 @@ export function TrackerForm<T extends NewTracker>({
   onRemove,
   onCancel,
 }: TrackerFormProps<T>) {
+  const [prevTracker, setPrevTracker] = useState<T | undefined>(tracker);
   const [editedTracker, setEditedTracker] = useState<T>(
     tracker ?? (defaultTracker as T),
   );
 
-  useEffect(() => {
+  // Synchronize editedTracker when tracker prop changes (during render, not in effect)
+  if (tracker !== prevTracker) {
+    setPrevTracker(tracker);
     setEditedTracker(tracker ?? (defaultTracker as T));
-  }, [tracker]);
+  }
 
   const removeCamping = (campingId: string) => {
     setEditedTracker((prev) => ({
