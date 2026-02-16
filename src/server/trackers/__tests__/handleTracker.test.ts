@@ -5,8 +5,12 @@ import { updateTrackerDb } from "@/db/queries/trackers";
 import type { Tracker } from "@/db/schema";
 import type { CampsiteData } from "@/server/trackers/providers/providerAdapter";
 
-vi.mock("../findCampsAndNotify");
-vi.mock("@/db/queries/trackers");
+vi.mock("../findCampsAndNotify", () => ({
+  findCampsAndNotify: vi.fn(),
+}));
+vi.mock("@/db/queries/trackers", () => ({
+  updateTrackerDb: vi.fn(),
+}));
 vi.mock("@/server/trackers/providers/providerAdapterFactory", () => ({
   getProviderFromString: vi.fn((p: string) => p),
   CampProvider: {
