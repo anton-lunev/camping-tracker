@@ -2,7 +2,7 @@ import type { CampsitesResponse } from "@/server/trackers/providers/recreation/s
 import type { CampsiteData } from "@/server/trackers/providers/providerAdapter";
 import { getFormattedDateWithoutTz } from "@/lib/date";
 
-const FREE_STATUSES = new Set(["Available", "Open"]);
+const FREE_STATUS = "Available";
 
 /** Converts response to CampsiteData */
 export function getCampsiteData(
@@ -19,7 +19,7 @@ export function getCampsiteData(
         siteName: campsite.site,
         campingId,
         campingName: campingName ?? campsite.loop,
-        isFree: FREE_STATUSES.has(value),
+        isFree: value === FREE_STATUS,
       });
     }
   }

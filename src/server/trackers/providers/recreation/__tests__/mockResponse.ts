@@ -30,7 +30,7 @@ export const mockResponse: CampsitesResponse = {
       availabilities: {
         "2024-03-20T00:00:00Z": "Reserved",
         "2024-03-21T00:00:00Z": "Available",
-        "2024-03-22T00:00:00Z": "Open",
+        "2024-03-22T00:00:00Z": "Available",
       },
       quantities: {},
       campsite_type: "STANDARD",

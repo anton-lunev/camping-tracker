@@ -25,28 +25,37 @@ export async function handleTracker(tracker: Tracker) {
     return;
   }
 
-  return Promise.all(
+  const results = await Promise.all(
     tracker.campings.map(
       async (camping: { id: string; name: string; provider: string }) => {
         const provider = getProviderFromString(camping.provider);
 
-        const results = await findCampsAndNotify({
+        const spots = await findCampsAndNotify({
           provider,
           campingId: camping.id,
           ...tracker,
           trackingState: tracker.trackingState[camping.id],
           chatId,
         });
-        // Update tracking state of the current camping id
-        const updatedTracker = {
-          ...tracker,
-          trackingState: {
-            ...tracker.trackingState,
-            [camping.id]: getTrackingStateItem(camping.id, results),
-          },
-        };
-        await updateTrackerDb(updatedTracker);
+        return { campingId: camping.id, spots };
       },
     ),
   );
+
+  // Build updated tracking state: only overwrite entries for successful API calls
+  const updatedTrackingState = { ...tracker.trackingState };
+  let hasUpdates = false;
+  for (const { campingId, spots } of results) {
+    if (spots) {
+      updatedTrackingState[campingId] = getTrackingStateItem(campingId, spots);
+      hasUpdates = true;
+    }
+  }
+
+  if (hasUpdates) {
+    await updateTrackerDb({
+      ...tracker,
+      trackingState: updatedTrackingState,
+    });
+  }
 }
